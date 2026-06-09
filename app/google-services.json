@@ -1,82 +1,45 @@
 {
   "project_info": {
-    "project_number": "364763737033",
-    "firebase_url": "https://ivy-widget.firebaseio.com",
-    "project_id": "ivy-widget",
-    "storage_bucket": "ivy-widget.appspot.com"
+    "project_number": "430681560949",
+    "project_id": "nevero-ivy-wallet",
+    "storage_bucket": "nevero-ivy-wallet.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:364763737033:android:634d1eb97e9254b3bc5618",
+        "mobilesdk_app_id": "1:430681560949:android:a35da588b2c6f87944253c",
         "android_client_info": {
-          "package_name": "com.ivy.wallet"
+          "package_name": "id.nevero.ivy.wallet"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "364763737033-k9vbsfmeou12rscq134lclc7sbr0608e.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.ivy.wallet",
-            "certificate_hash": "f9b8505c2740756c704f8782b6fc3ddcaaea3d80"
-          }
-        },
-        {
-          "client_id": "364763737033-t1d2qe7s0s8597k7anu3sb2nq79ot5tp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB4FVF29Qu17MhHmf-55l7l7W09hiMQuJM"
+          "current_key": "AIzaSyCc34yYH0M5kItxLaV6bpDHr2Mye0MoVh8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "364763737033-8f0ta4r3t5cjmavkhmdnjcufpcg6ror6.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:364763737033:android:7e379f986cb86320bc5618",
+        "mobilesdk_app_id": "1:430681560949:android:d6dff623d786d9a544253c",
         "android_client_info": {
-          "package_name": "com.ivy.wallet.debug"
+          "package_name": "id.nevero.ivy.wallet.debug"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "364763737033-ktnhou2u7q3num6aj02jj0v11dnp5imi.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.ivy.wallet.debug",
-            "certificate_hash": "962730459b106b8aa8fb225430deb6a97c559699"
-          }
-        },
-        {
-          "client_id": "364763737033-t1d2qe7s0s8597k7anu3sb2nq79ot5tp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB4FVF29Qu17MhHmf-55l7l7W09hiMQuJM"
+          "current_key": "AIzaSyCc34yYH0M5kItxLaV6bpDHr2Mye0MoVh8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "364763737033-8f0ta4r3t5cjmavkhmdnjcufpcg6ror6.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
