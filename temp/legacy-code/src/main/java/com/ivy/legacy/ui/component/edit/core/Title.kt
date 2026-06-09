@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -78,11 +79,13 @@ fun ColumnScope.Title(
     }
 
     val coroutineScope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     Suggestions(
         suggestions = suggestions,
     ) { suggestion ->
         setTitleTextFieldValue(selectEndTextFieldValue(suggestion))
         onTitleChanged(suggestion)
+        focusManager.clearFocus()
 
         coroutineScope.launch {
             // scroll to top for better UX
