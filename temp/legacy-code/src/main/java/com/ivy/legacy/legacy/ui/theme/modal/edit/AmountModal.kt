@@ -233,20 +233,33 @@ fun AmountInput(
     AmountKeyboard(
         horizontalPadding = 40.dp,
         forCalculator = false,
+        show000 = currency == "IDR",
         onNumberPressed = {
-            if (firstInput) {
-                setAmount(it)
-                firstInput = false
-            } else {
-                val formattedAmount = formatInputAmount(
-                    currency = currency,
-                    amount = amount,
-                    newSymbol = it,
-                    decimalCountMax = decimalCountMax
-                )
-                if (formattedAmount != null) {
-                    setAmount(formattedAmount)
+            val inputSymbols = it.toList()
+            var currentAmount = if (firstInput) "" else amount
+            var anyApplied = false
+            for (sym in inputSymbols) {
+                if (currentAmount.isEmpty()) {
+                    currentAmount = sym.toString()
+                    anyApplied = true
+                } else {
+                    val formattedAmount = formatInputAmount(
+                        currency = currency,
+                        amount = currentAmount,
+                        newSymbol = sym.toString(),
+                        decimalCountMax = decimalCountMax
+                    )
+                    if (formattedAmount != null) {
+                        currentAmount = formattedAmount
+                        anyApplied = true
+                    } else {
+                        break
+                    }
                 }
+            }
+            if (anyApplied) {
+                setAmount(currentAmount)
+                firstInput = false
             }
         },
         onDecimalPoint = {
@@ -312,6 +325,7 @@ fun AmountKeyboard(
     onNumberPressed: (String) -> Unit,
     onDecimalPoint: () -> Unit,
     horizontalPadding: Dp = 0.dp,
+    show000: Boolean = false,
     ZeroRow: (@Composable RowScope.() -> Unit)? = null,
     FirstRowExtra: (@Composable RowScope.() -> Unit)? = null,
     SecondRowExtra: (@Composable RowScope.() -> Unit)? = null,
@@ -399,15 +413,17 @@ fun AmountKeyboard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        KeypadCircleButton(
-            text = localDecimalSeparator(),
-            testTag = if (forCalculator) {
-                "calc_key_decimal_separator"
-            } else {
-                "key_decimal_separator"
+        if (!show000) {
+            KeypadCircleButton(
+                text = localDecimalSeparator(),
+                testTag = if (forCalculator) {
+                    "calc_key_decimal_separator"
+                } else {
+                    "key_decimal_separator"
+                }
+            ) {
+                onDecimalPoint()
             }
-        ) {
-            onDecimalPoint()
         }
 
         CircleNumberButton(
@@ -415,6 +431,20 @@ fun AmountKeyboard(
             value = "0",
             onNumberPressed = onNumberPressed
         )
+
+        if (show000) {
+            KeypadCircleButton(
+                text = "000",
+                testTag = if (forCalculator) {
+                    "calc_key_000"
+                } else {
+                    "key_000"
+                },
+                fontSize = 28.sp
+            ) {
+                onNumberPressed("000")
+            }
+        }
 
         IvyIcon(
             modifier = circleButtonModifier(onClick = onBackspace)
