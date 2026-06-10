@@ -6,14 +6,14 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.ivy.base.legacy.TransactionHistoryItem
-import com.ivy.data.model.primitive.NotBlankTrimmedString
-import com.ivy.ui.ComposeViewModel
 import com.ivy.data.model.Category
 import com.ivy.data.repository.CategoryRepository
+import com.ivy.data.repository.TagRepository
 import com.ivy.domain.features.Features
 import com.ivy.legacy.datamodel.Account
 import com.ivy.legacy.utils.getDefaultFIATCurrency
 import com.ivy.legacy.utils.ioThread
+import com.ivy.ui.ComposeViewModel
 import com.ivy.wallet.domain.action.account.AccountsAct
 import com.ivy.wallet.domain.action.settings.BaseCurrencyAct
 import com.ivy.wallet.domain.action.transaction.AllTrnsAct
@@ -31,6 +31,7 @@ class SearchViewModel @Inject constructor(
     private val trnsWithDateDivsAct: TrnsWithDateDivsAct,
     private val accountsAct: AccountsAct,
     private val categoryRepository: CategoryRepository,
+    private val tagRepository: TagRepository,
     private val baseCurrencyAct: BaseCurrencyAct,
     private val allTrnsAct: AllTrnsAct,
     private val features: Features
@@ -72,31 +73,46 @@ class SearchViewModel @Inject constructor(
 
     private fun search(query: String) {
         searchQuery.value = query
-        val normalizedQuery = query.lowercase().trim()
+        val searchQuery = TransactionSearchQuery.parse(query)
 
         viewModelScope.launch {
             val queryResult = ioThread {
-                val filteredTransactions = allTrnsAct(Unit)
+                val baseCurrency = baseCurrencyAct(Unit)
+                val allTransactions = allTrnsAct(Unit)
+                val categories = categoryRepository.findAll()
+                val tags = tagRepository.findByIds(allTransactions.flatMap { it.tags }.distinct())
+                val metadata = SearchMetadata(
+                    categoryNames = categories.associate { it.id to it.name.value },
+                    tagNames = tags.associate { it.id to it.name.value },
+                )
+                val filteredTransactions = allTransactions
                     .filter { transaction ->
-                        transaction.title.matchesQuery(normalizedQuery) ||
-                                transaction.description.matchesQuery(normalizedQuery)
+                        transaction.matchesSearchQuery(searchQuery, metadata)
                     }
-                trnsWithDateDivsAct(
-                    TrnsWithDateDivsAct.Input(
-                        baseCurrency = baseCurrencyAct(Unit),
-                        transactions = filteredTransactions
-                    )
-                ).toImmutableList()
+                SearchResult(
+                    transactions = trnsWithDateDivsAct(
+                        TrnsWithDateDivsAct.Input(
+                            baseCurrency = baseCurrency,
+                            transactions = filteredTransactions
+                        )
+                    ).toImmutableList(),
+                    baseCurrency = baseCurrency,
+                    accounts = accountsAct(Unit).toImmutableList(),
+                    categories = categories.toImmutableList()
+                )
             }
 
-            transactions.value = queryResult
-            baseCurrency.value = baseCurrencyAct(Unit)
-            accounts.value = accountsAct(Unit)
-            categories.value = categoryRepository.findAll().toImmutableList()
+            transactions.value = queryResult.transactions
+            baseCurrency.value = queryResult.baseCurrency
+            accounts.value = queryResult.accounts
+            categories.value = queryResult.categories
         }
     }
 
-    private fun NotBlankTrimmedString?.matchesQuery(query: String): Boolean {
-        return this?.value?.lowercase()?.contains(query) == true
-    }
+    private data class SearchResult(
+        val transactions: ImmutableList<TransactionHistoryItem>,
+        val baseCurrency: String,
+        val accounts: ImmutableList<Account>,
+        val categories: ImmutableList<Category>,
+    )
 }
