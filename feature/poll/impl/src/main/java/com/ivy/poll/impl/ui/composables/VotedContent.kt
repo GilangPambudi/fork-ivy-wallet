@@ -34,7 +34,7 @@ fun VotedContent(
     Icon(
       modifier = Modifier.size(48.dp),
       imageVector = Icons.Filled.Done,
-      tint = IvyColors.Green.primary,
+      tint = IvyColors.Purple.primary,
       contentDescription = null,
     )
     Spacer(Modifier.height(16.dp))

@@ -36,8 +36,15 @@ val Blue2 = Color(0xFF45E6E6)
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Blue3 = Color(0xFF457BE6)
 
+// Rivy: green is no longer a brand color. `Green` keeps its legacy name but now holds the
+// Rivy purple, so income, positive states and primary buttons follow the brand color.
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val Green = Color(0xFF14CC9E)
+val Green = Color(0xFF6B4DFF)
+
+// Rivy: the real greens, kept only as choices in the account/category color picker.
+val PaletteGreen = Color(0xFF14CC9E)
+val PaletteGreenLight = Color(0xFFAAF2E0)
+val PaletteGreenDark = Color(0xFF0A664F)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Green2 = Color(0xFF45E67B)
@@ -89,7 +96,7 @@ val Blue2Light = Color(0xFFB3FFFF)
 val Blue3Light = Color(0xFFCCDDFF)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val GreenLight = Color(0xFFAAF2E0)
+val GreenLight = Color(0xFFD5CCFF)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Green2Light = Color(0xFF99FFBB)
@@ -141,7 +148,7 @@ val Blue2Dark = Color(0xFF227373)
 val Blue3Dark = Color(0xFF223D73)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val GreenDark = Color(0xFF0A664F)
+val GreenDark = Color(0xFF352680)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Green2Dark = Color(0xFF22733D)
@@ -190,7 +197,7 @@ val MediumWhite = Color(0xFFEFEEF0)
 val Transparent = Color(0x00000000)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val GradientGreen = Gradient(Green, Color(0xFF49F2C8))
+val GradientGreen = Gradient(Green, Color(0xFFAA99FF))
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 @Immutable
