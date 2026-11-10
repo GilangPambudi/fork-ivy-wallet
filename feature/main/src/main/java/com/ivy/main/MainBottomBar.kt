@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -11,13 +12,16 @@ import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,7 +60,6 @@ import com.ivy.ui.R
 import com.ivy.wallet.ui.theme.Gradient
 import com.ivy.wallet.ui.theme.GradientGreen
 import com.ivy.wallet.ui.theme.GradientIvy
-import com.ivy.wallet.ui.theme.Green
 import com.ivy.wallet.ui.theme.Ivy
 import com.ivy.wallet.ui.theme.White
 import com.ivy.wallet.ui.theme.components.IvyCircleButton
@@ -71,6 +74,13 @@ import kotlin.math.roundToInt
 
 val TRN_BUTTON_CLICK_AREA_HEIGHT = 150.dp
 val FAB_BUTTON_SIZE = 56.dp
+
+// Rivy: the bottom bar is a floating pill. The FAB sits vertically centered inside it.
+private val BOTTOM_BAR_HEIGHT = 64.dp
+private val BOTTOM_BAR_BOTTOM_MARGIN = 12.dp
+private val BOTTOM_BAR_HORIZONTAL_MARGIN = 24.dp
+private val BOTTOM_BAR_MAX_WIDTH = 320.dp
+private val BOTTOM_BAR_BORDER_WIDTH = 2.dp
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 @Composable
@@ -116,11 +126,20 @@ fun BoxWithConstraintsScope.BottomBar(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
             .align(Alignment.BottomCenter)
-            .background(pureBlur())
-            .alpha(1f - buttonsShownPercent)
             .navigationBarsPadding()
+            .padding(
+                start = BOTTOM_BAR_HORIZONTAL_MARGIN,
+                end = BOTTOM_BAR_HORIZONTAL_MARGIN,
+                bottom = BOTTOM_BAR_BOTTOM_MARGIN
+            )
+            .widthIn(max = BOTTOM_BAR_MAX_WIDTH)
+            .fillMaxWidth()
+            .height(BOTTOM_BAR_HEIGHT)
+            .alpha(1f - buttonsShownPercent)
+            .clip(UI.shapes.rFull)
+            .background(pureBlur())
+            .border(BOTTOM_BAR_BORDER_WIDTH, UI.colors.medium, UI.shapes.rFull)
             .clickableNoIndication(rememberInteractionSource()) {
                 // consume click
             },
@@ -141,7 +160,7 @@ fun BoxWithConstraintsScope.BottomBar(
             icon = R.drawable.ic_accounts,
             name = stringResource(R.string.accounts),
             selected = tab == MainTab.ACCOUNTS,
-            selectedColor = Green
+            selectedColor = Ivy
         ) {
             selectTab(MainTab.ACCOUNTS)
         }
@@ -162,8 +181,9 @@ fun BoxWithConstraintsScope.BottomBar(
 
     // ------------------------------------ BUTTONS--------------------------------------------------
     val fabStartX = ivyContext.screenWidth / 2 - FAB_BUTTON_SIZE.toDensityPx() / 2
+    val fabBottomOffset = BOTTOM_BAR_BOTTOM_MARGIN + (BOTTOM_BAR_HEIGHT - FAB_BUTTON_SIZE) / 2
     val fabStartY = ivyContext.screenHeight - navigationBarInset() -
-            30.dp.toDensityPx() - FAB_BUTTON_SIZE.toDensityPx()
+            fabBottomOffset.toDensityPx() - FAB_BUTTON_SIZE.toDensityPx()
 
     TransactionButtons(
         buttonsShownPercent = buttonsShownPercent,
@@ -245,7 +265,7 @@ fun BoxWithConstraintsScope.BottomBar(
             }
 
             MainTab.ACCOUNTS -> {
-                GradientGreen
+                GradientIvy
             }
         },
         hasShadow = !expanded,
@@ -555,7 +575,7 @@ private fun AddTransferButton(
             .size(FAB_BUTTON_SIZE)
             .zIndex(200f),
         icon = R.drawable.ic_transfer,
-        backgroundGradient = GradientIvy,
+        backgroundGradient = Gradient.solid(UI.colors.gray),
         tint = White,
         onClick = onAddTransfer
     )
@@ -620,9 +640,9 @@ private fun RowScope.Tab(
     Row(
         modifier = Modifier
             .weight(1f)
+            .fillMaxHeight()
             .clip(UI.shapes.rFull)
             .clickable(onClick = onClick)
-            .padding(top = 12.dp, bottom = 16.dp)
             .testTag(name.lowercase()),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
