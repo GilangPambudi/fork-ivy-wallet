@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
+      - 'rivy/**'
   pull_request:
+  workflow_dispatch:
 
 jobs:
   assemble_demo_apk:
@@ -28,19 +30,5 @@ jobs:
       - name: Upload APK to Github Actions
         uses: actions/upload-artifact@v4
         with:
-          name: Ivy-Wallet-Demo.apk
+          name: Rivy-Demo.apk
           path: app/build/outputs/apk/demo/app-demo.apk
-
-      - name: Upload APK in Telegram Group
-        if: |
-          github.ref == 'refs/heads/main'
-        run: |
-          COMMIT_LINK="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
-          COMMIT_MESSAGE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}" | jq -r .commit.message | cut -c 1-100)
-          CAPTION=$'Ivy Wallet Demo APK:\n\n'"$COMMIT_MESSAGE"$'\n... see commit at: '"$COMMIT_LINK"
-          
-          curl -F "chat_id=-1001647280565" \
-               -F "document=@app/build/outputs/apk/demo/app-demo.apk" \
-               -F "reply_to_message_id=16118" \
-               -F "caption=$CAPTION" \
-               https://api.telegram.org/bot${{ secrets.BOTFATHER_TELEGRAM_BOT_TOKEN }}/sendDocument
