@@ -57,7 +57,7 @@
     <string name="online_csv_converter_free">Бесплатный онлайн CSV конвертер</string>
     <string name="check_email_spam">Проверить папки \"Промоакции\" и \"Спам\" в вашей электронной почте</string>
     <string name="download_email_file">Скачать файл \"transactions_export…\", прикрепленный к письму</string>
-    <string name="download_email_file_description">Если у вас более одной валюты, вам придётся загрузить каждый файл \"transactions_export…\" и импортировать его в Ivy</string>
+    <string name="download_email_file_description">Если у вас более одной валюты, вам придётся загрузить каждый файл \"transactions_export…\" и импортировать его в Rivy</string>
     <string name="import_from">Загрузить из</string>
     <string name="please_wait">Пожалуйста, подождите</string>
     <string name="importing_the_csv_file">Загружаем CSV файл</string>
@@ -150,7 +150,7 @@
     <string name="agreed_privacy_policy">Согласен с политикой конфиденциальности</string>
     <string name="terms_and_conditions">Условия</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
-    <string name="wallet_description">Отслеживайте ваши доходы, расходы и бюджет с Ivy.\n\nИнтуитивно понятный интерфейс, регулярные и запланированные платежи, управляй несколькими счетами, организуй транзакции по категориям, используй полезную статистику, экспортируй в CSV и многое другое.</string>
+    <string name="wallet_description">Отслеживайте ваши доходы, расходы и бюджет с Rivy.\n\nИнтуитивно понятный интерфейс, регулярные и запланированные платежи, управляй несколькими счетами, организуй транзакции по категориям, используй полезную статистику, экспортируй в CSV и многое другое.</string>
     <string name="enter_your_name">Для персонализации вашего кошелька введите своё имя</string>
     <string name="what_is_your_name">Как вас зовут?</string>
     <string name="enter">Ввести</string>
@@ -378,10 +378,10 @@
     <string name="create_first_planned_payment">Создайте свой первый запланированный платёж</string>
     <string name="create_first_planned_payment_description">Автоматизируйте отслеживание повторяющихся транзакций, таких как: подписки, арендная плата, заработная плата и т.д. Опережайте свои финансы, зная заранее, сколько вы должны заплатить/получить.</string>
     <string name="did_you_know">А вы знали?</string>
-    <string name="widget_description">У Ivy Wallet есть крутые виджеты, с помощью которых можно добавить транзакции ДОХОДЫ/РАСХОДЫ/ПЕРЕВОД за один клик со стартового экрана вашего смартфона.\n\nПримечание: Примечание: Если кнопка \"Добавить виджет\" не работает, пожалуйста, добавьте его вручную из меню виджетов.</string>
+    <string name="widget_description">У Rivy есть крутые виджеты, с помощью которых можно добавить транзакции ДОХОДЫ/РАСХОДЫ/ПЕРЕВОД за один клик со стартового экрана вашего смартфона.\n\nПримечание: Примечание: Если кнопка \"Добавить виджет\" не работает, пожалуйста, добавьте его вручную из меню виджетов.</string>
     <string name="add_widget">Добавить виджет</string>
     <string name="set_a_budget">Установить бюджет</string>
-    <string name="set_a_budget_description">Ivy Wallet помогает не только пассивно отслеживать ваш бюджет, но и проактивно создавать ваше финансовое будущее, задавая бюджеты и придерживаясь его.</string>
+    <string name="set_a_budget_description">Rivy помогает не только пассивно отслеживать ваш бюджет, но и проактивно создавать ваше финансовое будущее, задавая бюджеты и придерживаясь его.</string>
     <string name="expenses_piechart_description">Вы можете видеть структуру ваших расходов по категориям! Попробуйте, нажмите на серую/чёрную кнопку \"Расходы\" прямо под вашим балансом.</string>
     <string name="expenses_piechart">Круговая диаграмма Расходов</string>
     <string name="review_ivy_wallet">Оцените Ivy Wallet</string>
