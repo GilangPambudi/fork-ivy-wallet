@@ -57,7 +57,7 @@
     <string name="online_csv_converter_free">Konverter CSV Online GRATIS</string>
     <string name="check_email_spam">Periksa folder "Promosi" dan "Spam" email Anda</string>
     <string name="download_email_file">Unduh file "transactions_export..." yang dilampirkan dalam email.</string>
-    <string name="download_email_file_description">Jika Anda memiliki lebih dari satu mata uang, Anda harus mengunduh setiap file "transactions_export..." dan mengimpornya ke Ivy.</string>
+    <string name="download_email_file_description">Jika Anda memiliki lebih dari satu mata uang, Anda harus mengunduh setiap file "transactions_export..." dan mengimpornya ke Rivy.</string>
     <string name="import_from">Impor dari</string>
     <string name="please_wait">Harap tunggu</string>
     <string name="importing_the_csv_file">Mengimpor file CSV</string>
@@ -151,7 +151,7 @@
     <string name="agreed_privacy_policy">Setuju dengan Kebijakan Privasi kami</string>
     <string name="terms_and_conditions">Syarat dan Ketentuan</string>
     <string name="privacy_policy">Kebijakan Privasi</string>
-    <string name="wallet_description">Lacak pendapatan, pengeluaran, dan anggaran Anda dengan Ivy.\n\nAntarmuka pengguna intuitif, pembayaran berulang dan terencana, kelola beberapa akun, atur transaksi dalam kategori, statistik bermakna, ekspor ke CSV, dan banyak lagi.</string>
+    <string name="wallet_description">Lacak pendapatan, pengeluaran, dan anggaran Anda dengan Rivy.\n\nAntarmuka pengguna intuitif, pembayaran berulang dan terencana, kelola beberapa akun, atur transaksi dalam kategori, statistik bermakna, ekspor ke CSV, dan banyak lagi.</string>
     <string name="enter_your_name">Masukkan nama anda\nuntuk personalisasi\ndompet Anda</string>
     <string name="what_is_your_name">Apa nama Anda?</string>
     <string name="enter">Masukkan</string>
@@ -381,10 +381,10 @@
     <string name="create_first_planned_payment">Buat pembayaran terencana pertama Anda</string>
     <string name="create_first_planned_payment_description">Automatisasi pelacakan transaksi berulang seperti langganan, sewa, gaji, dll. Tetap unggul dalam keuangan dengan mengetahui berapa banyak yang harus Anda bayar/dapatkan di muka.</string>
     <string name="did_you_know">Tahukah Anda?</string>
-    <string name="widget_description">Ivy Wallet memiliki widget keren yang memungkinkan Anda menambahkan transaksi PENDAPATAN/PENGELUARAN/PENYALURAN dengan 1 klik dari beranda Anda\n\nCatatan: Jika tombol "Tambah widget" tidak berfungsi, tambahkan secara manual dari menu widget peluncur Anda.</string>
+    <string name="widget_description">Rivy memiliki widget keren yang memungkinkan Anda menambahkan transaksi PENDAPATAN/PENGELUARAN/PENYALURAN dengan 1 klik dari beranda Anda\n\nCatatan: Jika tombol "Tambah widget" tidak berfungsi, tambahkan secara manual dari menu widget peluncur Anda.</string>
     <string name="add_widget">Tambahkan widget</string>
     <string name="set_a_budget">Tetapkan anggaran</string>
-    <string name="set_a_budget_description">Ivy Wallet tidak hanya membantu Anda melacak pengeluaran secara pasif tetapi juga proaktif membuat masa depan keuangan Anda dengan menetapkan anggaran dan mematuhinya.</string>
+    <string name="set_a_budget_description">Rivy tidak hanya membantu Anda melacak pengeluaran secara pasif tetapi juga proaktif membuat masa depan keuangan Anda dengan menetapkan anggaran dan mematuhinya.</string>
     <string name="expenses_piechart_description">Anda dapat melihat struktur pengeluaran Anda berdasarkan kategori! Cobalah, ketuk tombol Pengeluaran abu-abu/hitam tepat di bawah saldo Anda.</string>
     <string name="expenses_piechart">Diagram Lingkaran Pengeluaran</string>
     <string name="review_ivy_wallet">Ulasan Ivy Wallet</string>

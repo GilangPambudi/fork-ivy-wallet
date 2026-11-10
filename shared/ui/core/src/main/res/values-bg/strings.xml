@@ -57,7 +57,7 @@
     <string name="online_csv_converter_free">Безплатен онлайн CSV конвертор</string>
     <string name="check_email_spam">Проверете "Promotions" и "Spam" папките в имейла си.</string>
     <string name="download_email_file">Download the \"transactions_export…\" file attached to the email.</string>
-    <string name="download_email_file_description">If you have more than one currency you\'ll have to download each \"transactions_export…\" file and import it in Ivy.</string>
+    <string name="download_email_file_description">If you have more than one currency you\'ll have to download each \"transactions_export…\" file and import it in Rivy.</string>
     <string name="import_from">Импортиране от</string>
     <string name="please_wait">Моля изчакайте</string>
     <string name="importing_the_csv_file">Импортиране на CSV файл</string>
@@ -150,7 +150,7 @@
     <string name="agreed_privacy_policy">Agreed with our Privacy policy</string>
     <string name="terms_and_conditions">Общи условия</string>
     <string name="privacy_policy">Privacy policy</string>
-    <string name="wallet_description">Track your income, expenses and budget with Ivy.\n\nIntuitive UI, recurring and planned payments, manage multiple accounts, organize transactions in categories, meaningful statistics, export to CSV and so much more.</string>
+    <string name="wallet_description">Track your income, expenses and budget with Rivy.\n\nIntuitive UI, recurring and planned payments, manage multiple accounts, organize transactions in categories, meaningful statistics, export to CSV and so much more.</string>
     <string name="enter_your_name">Enter your name\nto personalize your\nwallet</string>
     <string name="what_is_your_name">What\'s your name?</string>
     <string name="enter">Задай</string>
@@ -378,10 +378,10 @@
     <string name="create_first_planned_payment">Create your first planned payment</string>
     <string name="create_first_planned_payment_description">Automate the tracking of recurring transactions like your subscriptions, rent, salary, etc. Stay ahead of your finances by knowing how much you have to pay/get in advance.</string>
     <string name="did_you_know">Знаехте ли че?</string>
-    <string name="widget_description">Ivy Wallet has a cool widget that lets you add INCOME/EXPENSES/TRANSFER transactions with 1-click from your home\n\nNote: If the "Add widget" button doesn\'t work, please add it manually from your launcher\'s widgets menu.</string>
+    <string name="widget_description">Rivy has a cool widget that lets you add INCOME/EXPENSES/TRANSFER transactions with 1-click from your home\n\nNote: If the "Add widget" button doesn\'t work, please add it manually from your launcher\'s widgets menu.</string>
     <string name="add_widget">Add widget</string>
     <string name="set_a_budget">Задай бюджет</string>
-    <string name="set_a_budget_description">Ivy Wallet not only helps you to passively track your expenses but also proactively create your financial future by setting budgets and sticking to them.</string>
+    <string name="set_a_budget_description">Rivy not only helps you to passively track your expenses but also proactively create your financial future by setting budgets and sticking to them.</string>
     <string name="expenses_piechart_description">You can see your expenses structure by categories! Try it, tap the gray/black Expenses button just below your balance.</string>
     <string name="expenses_piechart">Expenses PieChart</string>
     <string name="review_ivy_wallet">Review Ivy Wallet</string>

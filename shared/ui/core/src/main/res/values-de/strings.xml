@@ -57,7 +57,7 @@
     <string name="online_csv_converter_free">Online CSV-Konverter KOSTENLOS</string>
     <string name="check_email_spam">Überprüfe den "Werbung"- und "Spam"-Ordner in deiner E-Mail</string>
     <string name="download_email_file">Lade die Datei \"transactions_export…\" herunter, die der E-Mail angehängt ist.</string>
-    <string name="download_email_file_description">Wenn du mehr als eine Währung hast, musst du jede \"transactions_export…\"-Datei herunterladen und sie in Ivy importieren.</string>
+    <string name="download_email_file_description">Wenn du mehr als eine Währung hast, musst du jede \"transactions_export…\"-Datei herunterladen und sie in Rivy importieren.</string>
     <string name="import_from">Importieren von</string>
     <string name="please_wait">Bitte warten</string>
     <string name="importing_the_csv_file">Importieren der CSV-Datei</string>
@@ -151,7 +151,7 @@
     <string name="agreed_privacy_policy">Mit unserer Datenschutzrichtlinie einverstanden</string>
     <string name="terms_and_conditions">Bedingungen</string>
     <string name="privacy_policy">Datenschutzrichtlinie</string>
-    <string name="wallet_description">Verfolge deine Einnahmen, Ausgaben und dein Budget mit Ivy.\n\nIntuitive Benutzeroberfläche, wiederkehrende und geplante Zahlungen, Verwaltung mehrerer Konten, Organisation von Transaktionen in Kategorien, aussagekräftige Statistiken, Export in CSV und vieles mehr.</string>
+    <string name="wallet_description">Verfolge deine Einnahmen, Ausgaben und dein Budget mit Rivy.\n\nIntuitive Benutzeroberfläche, wiederkehrende und geplante Zahlungen, Verwaltung mehrerer Konten, Organisation von Transaktionen in Kategorien, aussagekräftige Statistiken, Export in CSV und vieles mehr.</string>
     <string name="enter_your_name">Gib deinen Namen ein, um dein Wallet zu personalisieren.</string>
     <string name="what_is_your_name">Wie heißt du?</string>
     <string name="enter">Eingeben</string>
@@ -379,10 +379,10 @@
     <string name="create_first_planned_payment">Erstelle deine erste geplante Zahlung</string>
     <string name="create_first_planned_payment_description">Automatisiere die Verfolgung von wiederkehrenden Transaktionen wie Abonnements, Miete, Gehalt usw. Behalte den Überblick über deine Finanzen, indem du weißt, wie viel du im Voraus bezahlen/bekommen musst.</string>
     <string name="did_you_know">Wusstest du schon?</string>
-    <string name="widget_description">Ivy Wallet verfügt über ein cooles Widget, mit dem du EINNAHMEN-/AUSGABEN-/ÜBERTRAGSTRANSAKTIONEN mit nur einem Klick von deiner Startseite aus hinzufügen kannst\n\nHinweis: Wenn die Schaltfläche "Widget hinzufügen" nicht funktioniert, füge es bitte manuell über das Menü "Widgets" deines Launchers hinzu.</string>
+    <string name="widget_description">Rivy verfügt über ein cooles Widget, mit dem du EINNAHMEN-/AUSGABEN-/ÜBERTRAGSTRANSAKTIONEN mit nur einem Klick von deiner Startseite aus hinzufügen kannst\n\nHinweis: Wenn die Schaltfläche "Widget hinzufügen" nicht funktioniert, füge es bitte manuell über das Menü "Widgets" deines Launchers hinzu.</string>
     <string name="add_widget">Widget hinzufügen</string>
     <string name="set_a_budget">Ein Budget festlegen</string>
-    <string name="set_a_budget_description">Ivy Wallet hilft dir nicht nur, deine Ausgaben passiv zu verfolgen, sondern auch proaktiv deine finanzielle Zukunft zu gestalten, indem du Budgets festlegst und dich an sie hältst.</string>
+    <string name="set_a_budget_description">Rivy hilft dir nicht nur, deine Ausgaben passiv zu verfolgen, sondern auch proaktiv deine finanzielle Zukunft zu gestalten, indem du Budgets festlegst und dich an sie hältst.</string>
     <string name="expenses_piechart_description">Du kannst deine Ausgabenstruktur nach Kategorien sehen! Probiere es aus: Tippe auf die graue/schwarze Schaltfläche Ausgaben direkt unter deiner Bilanz.</string>
     <string name="expenses_piechart">Ausgaben Kreisdiagramm</string>
     <string name="review_ivy_wallet">Ivy Wallet bewerten</string>
@@ -487,7 +487,7 @@
     <string name="csv_import_failed">Das hat nicht geklappt. Versuche einen manuellen CSV Import.</string>
     <string name="import_a_csv_file_to_continue">Importiere eine CSV Datei um fortzufahren.</string>
     <string name="import_csv_continue">Fortsetzen</string>
-    <string name="warning_import_csv_file">" !!!⚠️ACHTUNG: Ein Import kann zu doppelten Einträgen führen!!! Ivy Wallet kann diese NICHT automatisch entfernt und alle Einträge müssen manuell geprüft werden! Wenn du noch keine Einträge erfasst hast, kannst du diese Meldung ignorieren."</string>
+    <string name="warning_import_csv_file">" !!!⚠️ACHTUNG: Ein Import kann zu doppelten Einträgen führen!!! Rivy kann diese NICHT automatisch entfernt und alle Einträge müssen manuell geprüft werden! Wenn du noch keine Einträge erfasst hast, kannst du diese Meldung ignorieren."</string>
     <string name="select_tags">Tags auswählen</string>
     <string name="language">Sprache</string>
     <string name="budget_exceeded_info">Budget überschritten um %1$s %2$s</string>

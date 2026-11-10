@@ -58,7 +58,7 @@
     <string name="online_csv_converter_free">Conversor de CSV en liña GRATIS</string>
     <string name="check_email_spam">Revisa os cartafoles "Promocións" e "Spam" do teu correo</string>
     <string name="download_email_file">Descarga o ficheiro adxunto \"transactions_export…\".</string>
-    <string name="download_email_file_description">Se tes máis dunha divisa, deberás descargar cada ficheiro \"transactions_export…\" e importalo en Ivy.</string>
+    <string name="download_email_file_description">Se tes máis dunha divisa, deberás descargar cada ficheiro \"transactions_export…\" e importalo en Rivy.</string>
     <string name="import_from">Importar desde</string>
     <string name="please_wait">Por favor, agarda</string>
     <string name="importing_the_csv_file">Importando o ficheiro CSV</string>
@@ -153,7 +153,7 @@
     <string name="agreed_privacy_policy">Aceptaches a nosa Política de Privacidade</string>
     <string name="terms_and_conditions">Termos e Condicións</string>
     <string name="privacy_policy">Política de Privacidade</string>
-    <string name="wallet_description">Controle os seus ingresos, gastos e orzamento con Ivy.\n\nInterfaz intuitiva, pagos periódicos e planificados, xestión de múltiples contas, organización de transaccións en categorías, potentes estatísticas, exportación a CSV e moito máis.</string>
+    <string name="wallet_description">Controle os seus ingresos, gastos e orzamento con Rivy.\n\nInterfaz intuitiva, pagos periódicos e planificados, xestión de múltiples contas, organización de transaccións en categorías, potentes estatísticas, exportación a CSV e moito máis.</string>
     <string name="enter_your_name">Introduce o teu nome\npara personalizar a túa\ncarteira</string>
     <string name="what_is_your_name">Como te chamas?</string>
     <string name="enter">Entrar</string>
@@ -384,10 +384,10 @@
     <string name="create_first_planned_payment">Crea o teu primeiro pago planificado</string>
     <string name="create_first_planned_payment_description">Fai un seguimento das túas transaccións periódicas, como subscricións, alugueres e nóminas. Mantente ao tanto das túas finanzas sabendo con antelación canto debes ou esperas recibir.</string>
     <string name="did_you_know">Sabías que?</string>
-    <string name="widget_description">Ivy Wallet ten un widget xenial que che permite engadir transaccións cun só toque dende a pantalla de inicio.\n\nNota: Se o botón "Engadir widget" non funciona, engádeo manualmente dende o menú de widgets do teu lanzador.</string>
+    <string name="widget_description">Rivy ten un widget xenial que che permite engadir transaccións cun só toque dende a pantalla de inicio.\n\nNota: Se o botón "Engadir widget" non funciona, engádeo manualmente dende o menú de widgets do teu lanzador.</string>
     <string name="add_widget">Engadir widget</string>
     <string name="set_a_budget">Establecer un orzamento</string>
-    <string name="set_a_budget_description">Ivy Wallet axúdache non só a seguir os teus gastos, senón tamén a xestionar proactivamente o teu futuro financeiro establecendo e cumprindo os orzamentos.</string>
+    <string name="set_a_budget_description">Rivy axúdache non só a seguir os teus gastos, senón tamén a xestionar proactivamente o teu futuro financeiro establecendo e cumprindo os orzamentos.</string>
     <string name="expenses_piechart_description">Podes ver a túa estrutura de gastos por categorías. Próbao tocando o botón gris/negro de Gastos xusto debaixo do teu saldo.</string>
     <string name="expenses_piechart">Gráfico de sectores de gastos</string>
     <string name="review_ivy_wallet">Deixa unha valoración</string>
@@ -490,7 +490,7 @@
     <string name="csv_import_failed">Se isto non funcionou, tenta a importación manual de CSV.</string>
     <string name="import_a_csv_file_to_continue">Importa un ficheiro CSV para continuar.</string>
     <string name="import_csv_continue">Continuar</string>
-    <string name="warning_import_csv_file">"\n!!!⚠️ADVERTENCIA: A importación pode duplicar as transaccións!!!\nAs transaccións duplicadas non se poden eliminar facilmente e terás que eliminalas manualmente unha a unha! \nMotivo: Non podemos analizar os identificadores de transacción porque Ivy Wallet só funciona con UUID e outras aplicacións non.\nSe estás comezando de cero, non te preocupes - ignora amablemente esta mensaxe."</string>
+    <string name="warning_import_csv_file">"\n!!!⚠️ADVERTENCIA: A importación pode duplicar as transaccións!!!\nAs transaccións duplicadas non se poden eliminar facilmente e terás que eliminalas manualmente unha a unha! \nMotivo: Non podemos analizar os identificadores de transacción porque Rivy só funciona con UUID e outras aplicacións non.\nSe estás comezando de cero, non te preocupes - ignora amablemente esta mensaxe."</string>
     <string name="select_tags">Seleccionar etiquetas</string>
     <string name="bill_paid">A túa factura de %1$s %2$s foi pagada</string>
     <string name="language">Lingua</string>

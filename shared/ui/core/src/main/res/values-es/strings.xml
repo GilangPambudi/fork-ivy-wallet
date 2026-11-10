@@ -57,7 +57,7 @@
     <string name="online_csv_converter_free">Convertidor CSV en línea GRATIS</string>
     <string name="check_email_spam">Revisa las carpetas de "Promociones" y "Spam" de tus correos electrónicos</string>
     <string name="download_email_file">Descargue el archivo \"transactions_export…\" adjunto al correo electrónico.</string>
-    <string name="download_email_file_description">Si tiene más de una moneda, deberá descargar cada archivo \"transactions_export…\" e importarlo en Ivy.</string>
+    <string name="download_email_file_description">Si tiene más de una moneda, deberá descargar cada archivo \"transactions_export…\" e importarlo en Rivy.</string>
     <string name="import_from">Importar de</string>
     <string name="please_wait">Espere por favor</string>
     <string name="importing_the_csv_file">Importando el archivo CSV</string>
@@ -150,7 +150,7 @@
     <string name="agreed_privacy_policy">De acuerdo con nuestra política de privacidad</string>
     <string name="terms_and_conditions">Términos y condiciones</string>
     <string name="privacy_policy">Política de privacidad</string>
-    <string name="wallet_description">Realice un seguimiento de sus ingresos, gastos y presupuesto con Ivy.\n\nInterfaz de usuario intuitiva, pagos recurrentes y planificados, administre múltiples cuentas, organice transacciones en categorías, estadísticas significativas, exporte a CSV y mucho más.</string>
+    <string name="wallet_description">Realice un seguimiento de sus ingresos, gastos y presupuesto con Rivy.\n\nInterfaz de usuario intuitiva, pagos recurrentes y planificados, administre múltiples cuentas, organice transacciones en categorías, estadísticas significativas, exporte a CSV y mucho más.</string>
     <string name="enter_your_name">Introduce tu nombre\npara personalizar tu\nbilletera</string>
     <string name="what_is_your_name">¿Cuál es tu nombre?</string>
     <string name="enter">Ingresar</string>
@@ -386,10 +386,10 @@
     <string name="create_first_planned_payment">Crea tu primer pago planificado</string>
     <string name="create_first_planned_payment_description">Automatice el seguimiento de transacciones recurrentes como sus suscripciones, alquiler, salario, etc. Manténgase al tanto de sus finanzas al saber cuánto tiene que pagar/obtener por adelantado.</string>
     <string name="did_you_know">¿Sabías?</string>
-    <string name="widget_description">Ivy Wallet tiene un widget genial que le permite agregar transacciones de INGRESOS/GASTOS/TRANSFERENCIAS con 1 clic desde su hogar\n\nNota: si el botón "Agregar widget" no funciona, agréguelo manualmente desde su lanzador\' menú de widgets.</string>
+    <string name="widget_description">Rivy tiene un widget genial que le permite agregar transacciones de INGRESOS/GASTOS/TRANSFERENCIAS con 1 clic desde su hogar\n\nNota: si el botón "Agregar widget" no funciona, agréguelo manualmente desde su lanzador\' menú de widgets.</string>
     <string name="add_widget">Añadir widget</string>
     <string name="set_a_budget">Establecer un presupuesto</string>
-    <string name="set_a_budget_description">Ivy Wallet no solo lo ayuda a realizar un seguimiento pasivo de sus gastos, sino que también crea proactivamente su futuro financiero estableciendo presupuestos y ajustándose a ellos.</string>
+    <string name="set_a_budget_description">Rivy no solo lo ayuda a realizar un seguimiento pasivo de sus gastos, sino que también crea proactivamente su futuro financiero estableciendo presupuestos y ajustándose a ellos.</string>
     <string name="expenses_piechart_description">¡Puedes ver tu estructura de gastos por categorías! Pruébelo, toque el botón Gastos gris/negro justo debajo de su saldo.</string>
     <string name="expenses_piechart">Gráfico circular de gastos</string>
     <string name="review_ivy_wallet">Danos tu opinión de Ivy Wallet</string>

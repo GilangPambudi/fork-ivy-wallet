@@ -57,7 +57,7 @@
     <string name="online_csv_converter_free">Trình chuyển đổi file CSV trực tuyến MIỄN PHÍ</string>
     <string name="check_email_spam">"Kiểm tra thư mục "Khuyến mãi" và "Thư rác" trong email của bạn".</string>
     <string name="download_email_file">Tải xuống file "transactions_export…" được đính kèm trong email.</string>
-    <string name="download_email_file_description">Nếu bạn có nhiều hơn một loại tiền tệ, bạn sẽ cần tải xuống mỗi tập tin \"transactions_export…\" và nhập chúng vào Ivy.</string>
+    <string name="download_email_file_description">Nếu bạn có nhiều hơn một loại tiền tệ, bạn sẽ cần tải xuống mỗi tập tin \"transactions_export…\" và nhập chúng vào Rivy.</string>
     <string name="import_from">Tải lên từ</string>
     <string name="please_wait">Vui lòng chờ</string>
     <string name="importing_the_csv_file">Đang tải lên tệp CSV</string>
@@ -151,7 +151,7 @@
     <string name="agreed_privacy_policy">Đồng ý với Chính sách quyền riêng tư của chúng tôi</string>
     <string name="terms_and_conditions">Các điều khoản và điều kiện</string>
     <string name="privacy_policy">Chính sách bảo mật</string>
-    <string name="wallet_description">Theo dõi thu nhập, chi phí và ngân sách của bạn với Ivy.\n\nGiao diện trực quan, thanh toán định kỳ và theo kế hoạch, quản lý nhiều tài khoản, sắp xếp giao dịch theo danh mục, số liệu thống kê mạnh mẽ, xuất file sang CSV và hơn thế nữa.</string>
+    <string name="wallet_description">Theo dõi thu nhập, chi phí và ngân sách của bạn với Rivy.\n\nGiao diện trực quan, thanh toán định kỳ và theo kế hoạch, quản lý nhiều tài khoản, sắp xếp giao dịch theo danh mục, số liệu thống kê mạnh mẽ, xuất file sang CSV và hơn thế nữa.</string>
     <string name="enter_your_name">Nhập tên \để cá nhân hóa\ví của bạn</string>
     <string name="what_is_your_name">Bạn tên là gì?</string>
     <string name="enter">Nhập</string>
@@ -380,10 +380,10 @@
     <string name="create_first_planned_payment">Tạo khoản thanh toán theo kế hoạch đầu tiên của bạn</string>
     <string name="create_first_planned_payment_description">Theo dõi các giao dịch thường xuyên của bạn, như các khoản đăng ký, tiền thuê nhà và tiền lương. Hãy luôn giữ kiểm soát về tài chính của bạn bằng cách biết trước số tiền bạn phải trả hoặc dự kiến nhận được.</string>
     <string name="did_you_know">Bạn biết không?</string>
-    <string name="widget_description">Ivy Wallet có một tiện ích thú vị cho phép bạn thêm giao dịch chỉ bằng một cú chạm từ màn hình chính.\n\nLưu ý: Nếu nút "Thêm tiện ích" không hoạt động, vui lòng thêm nút này theo cách thủ công từ menu tiện ích của trình khởi chạy(launcher) của bạn.</string>
+    <string name="widget_description">Rivy có một tiện ích thú vị cho phép bạn thêm giao dịch chỉ bằng một cú chạm từ màn hình chính.\n\nLưu ý: Nếu nút "Thêm tiện ích" không hoạt động, vui lòng thêm nút này theo cách thủ công từ menu tiện ích của trình khởi chạy(launcher) của bạn.</string>
     <string name="add_widget">Thêm tiện ích</string>
     <string name="set_a_budget">Thiết lập ngân sách</string>
-    <string name="set_a_budget_description">Ivy Wallet không chỉ giúp bạn theo dõi chi tiêu một cách chủ động mà còn giúp bạn quản lý tài chính trong tương lại bằng cách thiết lập và tuân thủ ngân sách.</string>
+    <string name="set_a_budget_description">Rivy không chỉ giúp bạn theo dõi chi tiêu một cách chủ động mà còn giúp bạn quản lý tài chính trong tương lại bằng cách thiết lập và tuân thủ ngân sách.</string>
     <string name="expenses_piechart_description">Bạn có thể xem cơ cấu chi tiêu của mình theo danh mục! Hãy thử bằng cách nhấn vào nút Chi phí màu xám/đen ngay bên dưới số dư của bạn.</string>
     <string name="expenses_piechart">Biểu đồ chi phí</string>
     <string name="review_ivy_wallet">Để lại đánh giá</string>
@@ -486,7 +486,7 @@
     <string name="csv_import_failed">Nếu điều này không hoạt động, hãy thử tải CSV bằng cách thủ công.</string>
     <string name="import_a_csv_file_to_continue">Tải lên một tệp CSV để tiếp tục.</string>
     <string name="import_csv_continue">Tiếp tục</string>
-    <string name="warning_import_csv_file">"\n!!!⚠️CẢNH BÁO: Việc tải tệp lên có thể gây ra trùng lặp các giao dịch!!!\nGiao dịch trùng lặp KHÔNG thể dễ dàng xóa và bạn sẽ cần phải xóa từng giao dịch một cách thủ công!\nLý do: Chúng tôi không thể phân tích các ID giao dịch vì Ivy Wallet chỉ hoạt động với UUID và các ứng dụng khác không.\nNếu bạn chọn Bắt đầu, không cần lo lắng - vui lòng bỏ qua thông báo này.\n                    "</string>
+    <string name="warning_import_csv_file">"\n!!!⚠️CẢNH BÁO: Việc tải tệp lên có thể gây ra trùng lặp các giao dịch!!!\nGiao dịch trùng lặp KHÔNG thể dễ dàng xóa và bạn sẽ cần phải xóa từng giao dịch một cách thủ công!\nLý do: Chúng tôi không thể phân tích các ID giao dịch vì Rivy chỉ hoạt động với UUID và các ứng dụng khác không.\nNếu bạn chọn Bắt đầu, không cần lo lắng - vui lòng bỏ qua thông báo này.\n                    "</string>
     <string name="select_tags">Chọn thẻ</string>
     <string name="language">Ngôn ngữ</string>
     <string name="budget_exceeded_info">Ngân sách vượt quá %1$s %2$s</string>
