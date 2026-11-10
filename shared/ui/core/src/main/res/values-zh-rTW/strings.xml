@@ -58,7 +58,7 @@
     <string name="online_csv_converter_free">線上 CSV 轉換器 免費</string>
     <string name="check_email_spam">檢查電子郵件的「促銷」和「垃圾郵件」資料夾</string>
     <string name="download_email_file">下載電子郵件附件中的 \"transactions_export…\" 檔案。</string>
-    <string name="download_email_file_description">如果您有多種貨幣，則必須下載每個 \"transactions_export…\" 檔案並將其匯入至 Ivy 中。</string>
+    <string name="download_email_file_description">如果您有多種貨幣，則必須下載每個 \"transactions_export…\" 檔案並將其匯入至 Rivy 中。</string>
     <string name="import_from">導入自</string>
     <string name="please_wait">請稍候</string>
     <string name="importing_the_csv_file">導入 CSV 檔案</string>
@@ -153,7 +153,7 @@
     <string name="agreed_privacy_policy">同意我們的隱私權政策</string>
     <string name="terms_and_conditions">條款與條件</string>
     <string name="privacy_policy">隱私權政策</string>
-    <string name="wallet_description">使用 Ivy 追蹤您的收入、支出和預算。\n\n直觀的介面、定期付款和經常交易、管理多個帳戶、按類別組織交易、強大的統計數據、匯出到 CSV 等等。</string>
+    <string name="wallet_description">使用 Rivy 追蹤您的收入、支出和預算。\n\n直觀的介面、定期付款和經常交易、管理多個帳戶、按類別組織交易、強大的統計數據、匯出到 CSV 等等。</string>
     <string name="enter_your_name">輸入您的姓名\n以個性化您的\n錢包</string>
     <string name="what_is_your_name">你叫什麼名字?</string>
     <string name="enter">輸入</string>
@@ -384,10 +384,10 @@
     <string name="create_first_planned_payment">建立您的第一個經常交易</string>
     <string name="create_first_planned_payment_description">追蹤您的常規交易，例如訂閱、租金和薪水。透過事先了解您所欠或預計收到的金額來掌握您的財務狀況。</string>
     <string name="did_you_know">你知道嗎?</string>
-    <string name="widget_description">Ivy Wallet 有一個很酷的小部件，讓您只需從主畫面點擊一下即可新增交易。\n\n注意: 如果 "新增小工具" 按鈕不起作用，請從啟動器的小工具選單中手動新增。</string>
+    <string name="widget_description">Rivy 有一個很酷的小部件，讓您只需從主畫面點擊一下即可新增交易。\n\n注意: 如果 "新增小工具" 按鈕不起作用，請從啟動器的小工具選單中手動新增。</string>
     <string name="add_widget">新增小工具</string>
     <string name="set_a_budget">設定預算</string>
-    <string name="set_a_budget_description">Ivy Wallet 不僅可以幫助您被動追蹤支出，還可以透過設定和遵守預算來主動管理您的財務未來。</string>
+    <string name="set_a_budget_description">Rivy 不僅可以幫助您被動追蹤支出，還可以透過設定和遵守預算來主動管理您的財務未來。</string>
     <string name="expenses_piechart_description">您可以按類別查看您的支出結構!請點擊餘額下方的灰色/黑色支出按鈕進行嘗試。</string>
     <string name="expenses_piechart">支出圓餅圖</string>
     <string name="review_ivy_wallet">發表評論</string>
@@ -490,7 +490,7 @@
     <string name="csv_import_failed">如果這不起作用，請嘗試手動 CSV 匯入。</string>
     <string name="import_a_csv_file_to_continue">匯入 CSV 檔案以繼續。</string>
     <string name="import_csv_continue">繼續</string>
-    <string name="warning_import_csv_file">"\n!!!⚠️警告: 導入可能會重複交易!!!\n重複的交易無法輕易刪除，您需要手動刪除其中的每一項!\n原因: 我們無法解析交易 ID，因為 Ivy wallet 僅適用於 UUID，而其他應用程式則不能。\n如果您剛開始，不用擔心 -請忽略此訊息。"</string>
+    <string name="warning_import_csv_file">"\n!!!⚠️警告: 導入可能會重複交易!!!\n重複的交易無法輕易刪除，您需要手動刪除其中的每一項!\n原因: 我們無法解析交易 ID，因為 Rivy 僅適用於 UUID，而其他應用程式則不能。\n如果您剛開始，不用擔心 -請忽略此訊息。"</string>
     <string name="select_tags">選擇標籤</string>
     <string name="bill_paid">您的 %1$s %2$s 帳單已支付</string>
     <string name="language">語言</string>

@@ -57,7 +57,7 @@
     <string name="online_csv_converter_free">Цахим, үнэгэй CSV хөрвүүлэгч</string>
     <string name="check_email_spam">Цахим шуудангийнхаа "Сурталчилгаа" болон "Спам" хавтсыг шалгана уу</string>
     <string name="download_email_file">Цахим шуудангаар илгээсэн \"transactions_export…\" файлыг татаж авна уу.</string>
-    <string name="download_email_file_description">Хэрэв та нэгээс олон мөнгөн тэмдэгт ашигладаг бол тус бүрд нь \"transactions_export…\" файлыг авч Ivy руу оруулна.</string>
+    <string name="download_email_file_description">Хэрэв та нэгээс олон мөнгөн тэмдэгт ашигладаг бол тус бүрд нь \"transactions_export…\" файлыг авч Rivy руу оруулна.</string>
     <string name="import_from">Нөөц сэргээх байршил</string>
     <string name="please_wait">Түр хүлээнэ үү</string>
     <string name="importing_the_csv_file">CSV файлаас сэргээж байна</string>
@@ -150,7 +150,7 @@
     <string name="agreed_privacy_policy">Нууцлалын бодлогыг зөвшөөрсөн</string>
     <string name="terms_and_conditions">Үйлчилгээний нөхцөл</string>
     <string name="privacy_policy">Нууцлалын бодлого</string>
-    <string name="wallet_description">Ivy-г ашиглаж орлого, зарлага, төсвөө хянаарай.\n\nХялбар интерфэйс, давтамжит ба төлөвлөгөөт гүйлгээ, олон данс, гүйлгээ ангилах, чухал статистик, CSV хэлбэрээр авах болон өшөө илүү зүйлс.</string>
+    <string name="wallet_description">Rivy-г ашиглаж орлого, зарлага, төсвөө хянаарай.\n\nХялбар интерфэйс, давтамжит ба төлөвлөгөөт гүйлгээ, олон данс, гүйлгээ ангилах, чухал статистик, CSV хэлбэрээр авах болон өшөө илүү зүйлс.</string>
     <string name="enter_your_name">Нэрээ оруулж\nсанхүүчтэйгээ\nтанилцаарай</string>
     <string name="what_is_your_name">Таны нэр?</string>
     <string name="enter">Оруулах</string>
@@ -378,10 +378,10 @@
     <string name="create_first_planned_payment">Анхны төлөвлөгөөт гүйлгээгээ үүсгэх</string>
     <string name="create_first_planned_payment_description">Давтамжтай хийгддэг гүйлгээнүүдээ (цалин, түрээс, төлбөрүүд гэх мэт) автоматаар бүртгээрэй. Ингэснээр та ирээдүйд авах орлого болон тооцоонуудаа урьдчилж мэдэх юм.</string>
     <string name="did_you_know">Үүнийг мэдэх үү?</string>
-    <string name="widget_description">Ivy Хэтэвч дэлгэцэн дээрээсээ ганцхан товшилтоор ОРЛОГО/ЗАРЛАГА/ШИЛЖҮҮЛЭГ гүйлгээ хийх боломжтой жижиг виджеттэй. \n\nЖич: Хэрэв "Виджет нэмэх" товч ажиллахгүй бол дэлгэц дээрээсээ нэмээрэй.</string>
+    <string name="widget_description">Rivy Хэтэвч дэлгэцэн дээрээсээ ганцхан товшилтоор ОРЛОГО/ЗАРЛАГА/ШИЛЖҮҮЛЭГ гүйлгээ хийх боломжтой жижиг виджеттэй. \n\nЖич: Хэрэв "Виджет нэмэх" товч ажиллахгүй бол дэлгэц дээрээсээ нэмээрэй.</string>
     <string name="add_widget">Виджет нэмэх</string>
     <string name="set_a_budget">Төсөв гаргах</string>
-    <string name="set_a_budget_description">Ivy Хэтэвч танд зөвхөн өөрийн санхүүгээ хянахад туслаад зогсохгүй, төсөв үүсгэж, түүнийгээ мөрдөхөд тусалдаг.</string>
+    <string name="set_a_budget_description">Rivy Хэтэвч танд зөвхөн өөрийн санхүүгээ хянахад туслаад зогсохгүй, төсөв үүсгэж, түүнийгээ мөрдөхөд тусалдаг.</string>
     <string name="expenses_piechart_description">Зарлагуудаа ангиллаар нь задалж хараарай! Дансны үлдэгдлийн доор байгаа Зардлууд гэсэн саарал товчин дээр дараад туршаад үзээрэй.</string>
     <string name="expenses_piechart">Зарлагын PieChart</string>
     <string name="review_ivy_wallet">Ivy Хэтэвч-г үнэлэх</string>

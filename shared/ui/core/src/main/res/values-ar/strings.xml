@@ -150,7 +150,7 @@
     <string name="agreed_privacy_policy">تمت الموافقة على سياسة الخصوصية</string>
     <string name="terms_and_conditions">الشروط و الأحكام</string>
     <string name="privacy_policy">سياسة الخصوصية</string>
-    <string name="wallet_description">تتبع دخلك, إنفاقك و ميزانيتك مع Ivy.\n\n تصميم أنيق, دفعات مخططة و متكررة, أدِر حسابات متعددة, نظم المعاملات في فئات, إحصائيات معبرة, صدّر المعاملات الى ملف csv و أكثر.</string>
+    <string name="wallet_description">تتبع دخلك, إنفاقك و ميزانيتك مع Rivy.\n\n تصميم أنيق, دفعات مخططة و متكررة, أدِر حسابات متعددة, نظم المعاملات في فئات, إحصائيات معبرة, صدّر المعاملات الى ملف csv و أكثر.</string>
     <string name="enter_your_name">أدخل اسمك\n لتخصيص محفظتك</string>
     <string name="what_is_your_name">ما اسمك؟</string>
     <string name="enter">إدخال</string>
@@ -378,10 +378,10 @@
     <string name="create_first_planned_payment">قم بإنشاء أول دفعة مخططة</string>
     <string name="create_first_planned_payment_description">قم بأتمتة المعاملات المتكررة مثل الاشتراكات, الايجار, الراتب, الخ.. كن في معرفة بأموالك من خلال معرفة المبلغ الذي يتعين عليك دفعه/الحصول عليه مقدمًا</string>
     <string name="did_you_know">هل كنت تعلم؟</string>
-    <string name="widget_description">Ivy Wallet \nلديها تطبيقات مصغرة (ويدجت) رائعة تتيح لك إضافة دخل/إنفاق/تحويل بضغطة واحدة فقط من الشاشة الرئيسية \n\n ملاحظ: اذا لم يعمل زر \"إضافة تطبيق مصغر\" يرجى اضافته يدويا عن طريق قائمة التطبيقات المصغرة في شاشتك الرئيسية</string>
+    <string name="widget_description">Rivy \nلديها تطبيقات مصغرة (ويدجت) رائعة تتيح لك إضافة دخل/إنفاق/تحويل بضغطة واحدة فقط من الشاشة الرئيسية \n\n ملاحظ: اذا لم يعمل زر \"إضافة تطبيق مصغر\" يرجى اضافته يدويا عن طريق قائمة التطبيقات المصغرة في شاشتك الرئيسية</string>
     <string name="add_widget">إضافة تطبيق مصغر</string>
     <string name="set_a_budget">تحديد ميزانية</string>
-    <string name="set_a_budget_description">Ivy Wallet \nلا تساعدك على تتبع نفقاتك فحسب ، بل تساعدك أيضًا في إنشاء مستقبلك المالي بشكل استباقي من خلال تحديد الميزانيات والالتزام بها.</string>
+    <string name="set_a_budget_description">Rivy \nلا تساعدك على تتبع نفقاتك فحسب ، بل تساعدك أيضًا في إنشاء مستقبلك المالي بشكل استباقي من خلال تحديد الميزانيات والالتزام بها.</string>
     <string name="expenses_piechart_description">يمكنك أن ترى مخطط النفقات الخاصة بك حسب الفئات! جربه ، اضغط على زر الإنفاق الرمادي/الأسود الموجود أسفل رصيدك مباشرة.</string>
     <string name="expenses_piechart">إحصائيات الإنفاق</string>
     <string name="review_ivy_wallet">Ivy Wallet قيم</string>
