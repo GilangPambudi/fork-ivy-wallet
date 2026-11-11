@@ -14,11 +14,12 @@ fun Exception.sendToCrashlytics(
     clarification?.let {
         logToCrashlytics("Log: $it")
     }
-    FirebaseCrashlytics.getInstance().recordException(this)
+    // Rivy ships without a Firebase project, so Crashlytics may not be initialized.
+    runCatching { FirebaseCrashlytics.getInstance().recordException(this) }
 }
 
 fun logToCrashlytics(msg: String) {
-    FirebaseCrashlytics.getInstance().log(msg)
+    runCatching { FirebaseCrashlytics.getInstance().log(msg) }
 }
 
 class DeveloperException(msg: String) : Exception(msg)

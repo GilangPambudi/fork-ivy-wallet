@@ -36,8 +36,15 @@ class PollRepositoryImpl @Inject constructor(
     poll: PollId,
     option: PollOptionId
   ): Either<String, Unit> = suspendCoroutine { cont ->
+    // Rivy ships without a Firebase project, so Firestore may not be available.
+    val firestore = runCatching { Firebase.firestore }.getOrNull()
+    if (firestore == null) {
+      cont.resume(Either.Left("Polls are not available in this build"))
+      return@suspendCoroutine
+    }
+
     // Define a reference to the document using the deviceId as its ID
-    val voteDocRef = Firebase.firestore
+    val voteDocRef = firestore
       .collection("polls")
       .document(poll.id)
       .collection("votes")

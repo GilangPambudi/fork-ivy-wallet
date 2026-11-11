@@ -6,8 +6,6 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
     id("io.gitlab.arturbosch.detekt")
 }
 
@@ -16,7 +14,7 @@ android {
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
-        applicationId = "id.nevero.ivy.wallet"
+        applicationId = "dev.pambudi.ivy.wallet"
         minSdk = libs.versions.min.sdk.get().toInt()
         targetSdk = libs.versions.compile.sdk.get().toInt()
         versionName = libs.versions.version.name.get()
@@ -88,7 +86,6 @@ android {
 
             signingConfig = signingConfigs.getByName("debug")
 
-            applicationIdSuffix = ".debug"
             resValue("string", "app_name", "Rivy")
         }
     }
