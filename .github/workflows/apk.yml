@@ -5,7 +5,11 @@ on:
     branches:
       - main
       - 'rivy/**'
+    paths-ignore:
+      - 'server/**'
   pull_request:
+    paths-ignore:
+      - 'server/**'
   workflow_dispatch:
 
 jobs:
@@ -32,3 +36,6 @@ jobs:
         with:
           name: Rivy-Demo.apk
           path: app/build/outputs/apk/demo/app-demo.apk
+
+      - name: Run Rivy unit tests
+        run: ./gradlew :feature:rivy:testDebugUnitTest

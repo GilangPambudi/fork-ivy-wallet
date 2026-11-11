@@ -1,0 +1,54 @@
+name: Server
+
+on:
+  push:
+    branches:
+      - main
+      - 'rivy/**'
+    paths:
+      - 'server/**'
+      - '.github/workflows/server.yml'
+  pull_request:
+    paths:
+      - 'server/**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: rivy
+          POSTGRES_PASSWORD: rivy
+          POSTGRES_DB: rivy_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rivy -d rivy_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Checkout GIT
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        env:
+          RIVY_TEST_DATABASE_URL: postgres://rivy:rivy@localhost:5432/rivy_test?sslmode=disable
+        run: go test -count=1 ./...
+
+      - name: Build Docker image
+        run: docker build -t rivy-server .
