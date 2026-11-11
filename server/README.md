@@ -130,6 +130,9 @@ The forwarder lives in [`forwarder/`](forwarder/README.md).
 
 ## Run with Docker
 
+The full walkthrough, including Google sign-in, the email forwarder and the
+app, is in [`SETUP.md`](SETUP.md).
+
 ```sh
 cp .env.example .env   # then fill it in
 docker compose up -d --build
