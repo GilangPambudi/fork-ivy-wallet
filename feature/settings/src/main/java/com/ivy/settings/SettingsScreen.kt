@@ -54,6 +54,8 @@ import com.ivy.navigation.FeaturesScreen
 import com.ivy.navigation.ImportScreen
 import com.ivy.navigation.Navigation
 import com.ivy.navigation.ReleasesScreen
+import com.ivy.navigation.RivyInboxScreen
+import com.ivy.navigation.RivySyncScreen
 import com.ivy.navigation.navigation
 import com.ivy.navigation.screenScopedViewModel
 import com.ivy.ui.R
@@ -235,6 +237,29 @@ private fun BoxWithConstraintsScope.UI(
 
 //            Spacer(Modifier.height(20.dp))
 //            Premium()
+        }
+
+        item {
+            SettingsSectionDivider(text = "Rivy")
+
+            Spacer(Modifier.height(16.dp))
+
+            val nav = navigation()
+            SettingsDefaultButton(
+                icon = R.drawable.ic_email,
+                text = "Kotak masuk transaksi"
+            ) {
+                nav.navigateTo(RivyInboxScreen)
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            SettingsDefaultButton(
+                icon = R.drawable.ic_sync,
+                text = "Sinkronisasi"
+            ) {
+                nav.navigateTo(RivySyncScreen)
+            }
         }
 
         item {

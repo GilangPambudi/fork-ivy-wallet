@@ -145,3 +145,10 @@ data object ReleasesScreen : Screen
 data object DisclaimerScreen : Screen
 
 data object PollScreen : Screen
+
+data object RivySyncScreen : Screen
+
+data object RivyInboxScreen : Screen {
+    /** Intent extra that opens the app on this screen. */
+    const val EXTRA_OPEN = "rivy_open_inbox"
+}

@@ -139,6 +139,7 @@ dependencies {
     implementation(projects.feature.poll.public)
     implementation(projects.feature.releases)
     implementation(projects.feature.reports)
+    implementation(projects.feature.rivy)
     implementation(projects.feature.search)
     implementation(projects.feature.settings)
     implementation(projects.feature.transactions)

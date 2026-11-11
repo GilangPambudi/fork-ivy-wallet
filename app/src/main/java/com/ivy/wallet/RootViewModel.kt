@@ -19,6 +19,7 @@ import com.ivy.navigation.EditTransactionScreen
 import com.ivy.navigation.MainScreen
 import com.ivy.navigation.Navigation
 import com.ivy.navigation.OnboardingScreen
+import com.ivy.navigation.RivyInboxScreen
 import com.ivy.ui.R
 import com.ivy.wallet.domain.deprecated.logic.notification.TransactionReminderLogic
 import com.ivy.wallet.migrations.MigrationsManager
@@ -106,6 +107,12 @@ class RootViewModel @Inject constructor(
 
     @Suppress("SwallowedException")
     private fun handleSpecialStart(intent: Intent): Boolean {
+        if (intent.getBooleanExtra(RivyInboxScreen.EXTRA_OPEN, false)) {
+            nav.navigateTo(MainScreen)
+            nav.navigateTo(RivyInboxScreen)
+            return true
+        }
+
         val addTrnType: TransactionType? = try {
             intent.getSerializableExtra(EXTRA_ADD_TRANSACTION_TYPE) as? TransactionType
                 ?: TransactionType.valueOf(intent.getStringExtra(EXTRA_ADD_TRANSACTION_TYPE) ?: "")

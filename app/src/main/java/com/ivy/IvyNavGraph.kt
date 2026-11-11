@@ -38,6 +38,8 @@ import com.ivy.navigation.PlannedPaymentsScreen
 import com.ivy.navigation.PollScreen
 import com.ivy.navigation.ReleasesScreen
 import com.ivy.navigation.ReportScreen
+import com.ivy.navigation.RivyInboxScreen
+import com.ivy.navigation.RivySyncScreen
 import com.ivy.navigation.Screen
 import com.ivy.navigation.SearchScreen
 import com.ivy.navigation.SettingsScreen
@@ -49,6 +51,8 @@ import com.ivy.planned.list.PlannedPaymentsScreen
 import com.ivy.poll.impl.ui.PollScreen
 import com.ivy.releases.ReleasesScreenImpl
 import com.ivy.reports.ReportScreen
+import com.ivy.rivy.ui.inbox.RivyInboxScreenImpl
+import com.ivy.rivy.ui.sync.RivySyncScreenImpl
 import com.ivy.search.SearchScreen
 import com.ivy.settings.SettingsScreen
 import com.ivy.transaction.EditTransactionScreen
@@ -88,5 +92,7 @@ fun BoxWithConstraintsScope.IvyNavGraph(screen: Screen?) {
         ReleasesScreen -> ReleasesScreenImpl()
         DisclaimerScreen -> DisclaimerScreenImpl()
         PollScreen -> PollScreen()
+        RivySyncScreen -> RivySyncScreenImpl()
+        RivyInboxScreen -> RivyInboxScreenImpl()
     }
 }

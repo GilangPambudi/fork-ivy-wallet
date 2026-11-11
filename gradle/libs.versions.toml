@@ -119,6 +119,9 @@ androidx-activity = { module = "androidx.activity:activity-ktx", version = "1.9.
 appcompat-activity = { module = "androidx.appcompat:appcompat", version = "1.7.0" }
 androidx-work = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "androidx-work" }
+androidx-credentials = { module = "androidx.credentials:credentials", version = "1.2.2" }
+androidx-credentials-play = { module = "androidx.credentials:credentials-play-services-auth", version = "1.2.2" }
+google-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version = "1.1.1" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version = "1.3.2" }
 
 # Material
