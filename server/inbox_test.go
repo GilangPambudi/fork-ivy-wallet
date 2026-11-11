@@ -188,6 +188,24 @@ func TestUnreadableBankEmailIsKeptForTheOwner(t *testing.T) {
 	}
 }
 
+func TestPlainTextIsUsedWhenTheHTMLCannotBeRead(t *testing.T) {
+	s := newInboxServer(t)
+	session := s.signIn("phone")
+
+	resp := s.ingest(ingestRequest{
+		MessageID: "<qris-2@bca.co.id>", From: "bca@bca.co.id", Subject: "Internet Transaction Journal",
+		HTML: "<html><body><img src=\"cid:journal\" alt=\"Transaction journal\"></body></html>",
+		Text: bcaQRISText,
+	})
+	if resp.Result != "stored" {
+		t.Fatalf("result = %q, want stored", resp.Result)
+	}
+	item := inboxItemOf(t, s.pull(session, 0, 100).Records[0])
+	if !item.Parsed || item.Amount != 18000 {
+		t.Errorf("item = %+v", item)
+	}
+}
+
 func TestTransferBetweenOwnBanksIsPaired(t *testing.T) {
 	s := newInboxServer(t)
 	session := s.signIn("phone")

@@ -84,6 +84,15 @@ func (a *API) handleIngestEmail(w http.ResponseWriter, r *http.Request) {
 
 	item := InboxItem{Status: "pending", Subject: strings.TrimSpace(req.Subject), ReceivedAt: now}
 	tx, err := ParseBankEmail(mail)
+	if err != nil && !errors.Is(err, ErrUnknownSender) && req.HTML != "" && strings.TrimSpace(req.Text) != "" {
+		// The HTML could not be read. The plain text copy of the same email
+		// sometimes can.
+		plain := mail
+		plain.Text = flattenBody("", req.Text)
+		if plainTx, plainErr := ParseBankEmail(plain); plainErr == nil {
+			tx, err = plainTx, nil
+		}
+	}
 	switch {
 	case errors.Is(err, ErrUnknownSender), errors.Is(err, ErrNotTransaction):
 		writeJSON(w, http.StatusOK, map[string]string{"result": "ignored"})
