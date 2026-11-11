@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rivy
+      POSTGRES_PASSWORD: ${RIVY_DB_PASSWORD:?set RIVY_DB_PASSWORD in .env}
+      POSTGRES_DB: rivy
+    volumes:
+      - rivy-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rivy -d rivy"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RIVY_DATABASE_URL: postgres://rivy:${RIVY_DB_PASSWORD}@db:5432/rivy?sslmode=disable
+      RIVY_ALLOWED_EMAIL: ${RIVY_ALLOWED_EMAIL:?set RIVY_ALLOWED_EMAIL in .env}
+      RIVY_GOOGLE_CLIENT_ID: ${RIVY_GOOGLE_CLIENT_ID:?set RIVY_GOOGLE_CLIENT_ID in .env}
+    # Only reachable from the VPS itself. Put a reverse proxy with HTTPS
+    # (Caddy, Nginx) in front of it; never expose this port to the internet.
+    ports:
+      - "127.0.0.1:8080:8080"
+
+volumes:
+  rivy-db:
