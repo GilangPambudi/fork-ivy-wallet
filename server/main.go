@@ -33,6 +33,8 @@ func main() {
 	defer store.Close()
 
 	api := NewAPI(store, NewGoogleVerifier(cfg.GoogleClientID), cfg.AllowedEmail, logger)
+	api.googleClientID = cfg.GoogleClientID
+	api.ingestToken = cfg.IngestToken
 	server := &http.Server{
 		Addr:              cfg.ListenAddr,
 		Handler:           api.Handler(),

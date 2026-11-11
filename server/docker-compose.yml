@@ -24,6 +24,7 @@ services:
       RIVY_DATABASE_URL: postgres://rivy:${RIVY_DB_PASSWORD}@db:5432/rivy?sslmode=disable
       RIVY_ALLOWED_EMAIL: ${RIVY_ALLOWED_EMAIL:?set RIVY_ALLOWED_EMAIL in .env}
       RIVY_GOOGLE_CLIENT_ID: ${RIVY_GOOGLE_CLIENT_ID:?set RIVY_GOOGLE_CLIENT_ID in .env}
+      RIVY_INGEST_TOKEN: ${RIVY_INGEST_TOKEN:-}
     # Only reachable from the VPS itself. Put a reverse proxy with HTTPS
     # (Caddy, Nginx) in front of it; never expose this port to the internet.
     ports:

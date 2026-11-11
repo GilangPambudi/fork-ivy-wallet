@@ -16,6 +16,9 @@ type Config struct {
 	GoogleClientID string
 	// ListenAddr is the address the HTTP server binds to.
 	ListenAddr string
+	// IngestToken is the secret the email forwarder sends. Empty turns the
+	// email inbox off.
+	IngestToken string
 }
 
 func loadConfig(getenv func(string) string) (Config, error) {
@@ -24,6 +27,7 @@ func loadConfig(getenv func(string) string) (Config, error) {
 		AllowedEmail:   strings.TrimSpace(getenv("RIVY_ALLOWED_EMAIL")),
 		GoogleClientID: strings.TrimSpace(getenv("RIVY_GOOGLE_CLIENT_ID")),
 		ListenAddr:     strings.TrimSpace(getenv("RIVY_LISTEN_ADDR")),
+		IngestToken:    strings.TrimSpace(getenv("RIVY_INGEST_TOKEN")),
 	}
 	if cfg.ListenAddr == "" {
 		cfg.ListenAddr = ":8080"
@@ -38,6 +42,9 @@ func loadConfig(getenv func(string) string) (Config, error) {
 	}
 	if cfg.GoogleClientID == "" {
 		missing = append(missing, "RIVY_GOOGLE_CLIENT_ID")
+	}
+	if cfg.IngestToken != "" && len(cfg.IngestToken) < 24 {
+		return Config{}, fmt.Errorf("RIVY_INGEST_TOKEN must be at least 24 characters long")
 	}
 	if len(missing) > 0 {
 		return Config{}, fmt.Errorf("missing required environment variables: %s", strings.Join(missing, ", "))

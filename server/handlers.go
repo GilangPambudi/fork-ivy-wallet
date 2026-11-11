@@ -37,6 +37,11 @@ var recordTypes = map[string]bool{
 	"tag":                  true,
 	"tag_association":      true,
 	"settings":             true,
+	// Transactions read from bank emails and what the owner taught the app
+	// about them: which title a merchant gets, which account a bank source is.
+	"inbox_item":    true,
+	"merchant_rule": true,
+	"account_link":  true,
 }
 
 // API is the HTTP layer of the sync server.
@@ -46,6 +51,11 @@ type API struct {
 	allowedEmail string
 	now          func() time.Time
 	log          *slog.Logger
+
+	// googleClientID is handed to the app so it only needs the server address.
+	googleClientID string
+	// ingestToken authenticates the email forwarder. Empty turns the inbox off.
+	ingestToken string
 }
 
 func NewAPI(store *Store, verifier TokenVerifier, allowedEmail string, log *slog.Logger) *API {
@@ -61,6 +71,8 @@ func NewAPI(store *Store, verifier TokenVerifier, allowedEmail string, log *slog
 func (a *API) Handler() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", a.handleHealth)
+	mux.HandleFunc("GET /v1/config", a.handleConfig)
+	mux.HandleFunc("POST /v1/inbox/email", a.handleIngestEmail)
 	mux.HandleFunc("POST /v1/auth/google", a.handleAuthGoogle)
 	mux.Handle("POST /v1/auth/logout", a.requireSession(a.handleLogout))
 	mux.Handle("POST /v1/sync/push", a.requireSession(a.handlePush))
@@ -110,6 +122,14 @@ func (a *API) handleHealth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+// handleConfig tells the app what it needs to sign in.
+func (a *API) handleConfig(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, map[string]any{
+		"google_client_id": a.googleClientID,
+		"inbox_enabled":    a.ingestToken != "",
+	})
 }
 
 func (a *API) handleAuthGoogle(w http.ResponseWriter, r *http.Request) {
