@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import com.ivy.legacy.rivyui.OpenModals
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -82,6 +83,11 @@ fun BoxScope.IvyModal(
 ) {
     val rootView = LocalView.current
     var keyboardShown by remember { mutableStateOf(false) }
+
+    DisposableEffect(visible) {
+        if (visible) OpenModals.opened()
+        onDispose { if (visible) OpenModals.closed() }
+    }
 
     onScreenStart {
         rootView.addKeyboardListener {

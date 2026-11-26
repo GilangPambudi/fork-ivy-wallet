@@ -22,6 +22,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import com.ivy.legacy.rivyui.OpenModals
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -110,6 +112,11 @@ fun BoxWithConstraintsScope.FilterOverlay(
         targetValue = if (visible) 1f else 0f,
         animationSpec = springBounce()
     )
+
+    DisposableEffect(visible) {
+        if (visible) OpenModals.opened()
+        onDispose { if (visible) OpenModals.closed() }
+    }
 
     var localFilter by remember(filter) {
         mutableStateOf(filter)

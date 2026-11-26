@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.sp
 import com.ivy.legacy.rivyui.NavStyle
+import com.ivy.legacy.rivyui.OpenModals
 import com.ivy.legacy.rivyui.RivyUiState
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -128,7 +130,12 @@ fun BoxWithConstraintsScope.BottomBar(
         animationSpec = springBounceFast()
     )
 
-    val hideOffsetPx = hideProgress *
+    val overlayOpen = OpenModals.count > 0 || ivyContext.moreMenuExpanded
+    val coverProgress by animateFloatAsState(
+        targetValue = if (overlayOpen) 1f else hideProgress,
+        label = "nav_cover",
+    )
+    val hideOffsetPx = coverProgress *
         (navigationBarInset() + (PILL_HEIGHT + FAB_BUTTON_SIZE + 64.dp).toDensityPx())
 
     if (style == NavStyle.CLASSIC) {
@@ -297,7 +304,7 @@ fun BoxWithConstraintsScope.BottomBar(
     }
 }
 
-private val PILL_HEIGHT = 64.dp
+private val PILL_HEIGHT = 76.dp
 private val PILL_MARGIN = 16.dp
 
 @Composable
@@ -359,27 +366,27 @@ private fun PillTab(
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .thenIf(wideIndicator && selected) { background(indicator) }
-            .padding(horizontal = if (wideIndicator) 12.dp else 4.dp, vertical = 4.dp)
+            .padding(horizontal = if (wideIndicator) 14.dp else 2.dp, vertical = 6.dp)
             .testTag("pill_tab_${tab.name.lowercase()}"),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
             modifier = Modifier
-                .size(width = 48.dp, height = 28.dp)
+                .size(width = 60.dp, height = 34.dp)
                 .clip(CircleShape)
                 .thenIf(!wideIndicator && selected) { background(indicator) },
             contentAlignment = Alignment.Center,
         ) {
             IvyIcon(
-                modifier = Modifier.size(22.dp),
+                modifier = Modifier.size(30.dp),
                 icon = icon,
                 tint = tint,
             )
         }
         Text(
             text = stringResource(label),
-            style = UI.typo.c.style(
-                fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.SemiBold,
+            style = UI.typo.c.copy(fontSize = 13.sp).style(
+                fontWeight = FontWeight.Bold,
                 color = if (selected) UI.colors.pureInverse else UI.colors.gray,
             ),
             maxLines = 1,

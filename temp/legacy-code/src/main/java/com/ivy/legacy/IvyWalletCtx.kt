@@ -96,7 +96,7 @@ class IvyWalletCtx @Inject constructor() : IvyContext() {
     }
 
     @Deprecated("Legacy code. Don't use it, please.")
-    var moreMenuExpanded = false
+    var moreMenuExpanded by mutableStateOf(false)
         private set
 
     @Deprecated("Legacy code. Don't use it, please.")
