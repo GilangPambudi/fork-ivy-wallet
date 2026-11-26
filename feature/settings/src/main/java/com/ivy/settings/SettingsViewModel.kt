@@ -27,6 +27,7 @@ import com.ivy.frp.monad.Res
 import com.ivy.legacy.IvyWalletCtx
 import com.ivy.legacy.LogoutLogic
 import com.ivy.legacy.driveexport.DriveExport
+import com.ivy.legacy.rivyui.RivyUi
 import com.ivy.legacy.domain.action.settings.UpdateSettingsAct
 import com.ivy.legacy.utils.getISOFormattedDateTime
 import com.ivy.legacy.utils.ioThread
@@ -62,6 +63,7 @@ class SettingsViewModel @Inject constructor(
     private val settingsWriter: WriteSettingsDao,
     private val exportCsvUseCase: ExportCsvUseCase,
     private val driveExport: DriveExport,
+    private val rivyUi: RivyUi,
     @ApplicationContext private val context: Context
 ) : ComposeViewModel<SettingsState, SettingsEvent>() {
 
@@ -100,6 +102,7 @@ class SettingsViewModel @Inject constructor(
             driveShowStatus = driveExport.state.collectAsState().value.showStatus,
             driveRecentConnected = driveExport.state.collectAsState().value.recentConnected,
             driveSetupStep = driveSetupStep.intValue,
+            rivyUi = rivyUi.state.collectAsState().value,
         )
     }
 
@@ -301,6 +304,10 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.AddRecentDriveFile -> driveSetupStep.intValue = 2
             is SettingsEvent.PickDriveFile -> pickDriveFile(event.step)
             SettingsEvent.CloseDriveSetup -> driveSetupStep.intValue = 0
+            is SettingsEvent.SetNavStyle -> rivyUi.setNavStyle(event.style)
+            is SettingsEvent.SetPalette -> rivyUi.setPalette(event.palette)
+            is SettingsEvent.SetNavAutoHide -> rivyUi.setAutoHide(event.autoHide)
+            is SettingsEvent.MoveTab -> rivyUi.moveTab(event.tab, event.by)
             SettingsEvent.RunDriveExport -> viewModelScope.launch(Dispatchers.IO) {
                 runDriveExportNow()
             }

@@ -41,6 +41,8 @@ import com.ivy.domain.RootScreen
 import com.ivy.home.customerjourney.CustomerJourneyCardsProvider
 import com.ivy.legacy.Constants
 import com.ivy.legacy.IvyWalletCtx
+import com.ivy.legacy.rivyui.ApplyRivyPalette
+import com.ivy.legacy.rivyui.RivyUi
 import com.ivy.legacy.appDesign
 import com.ivy.legacy.utils.activityForResultLauncher
 import com.ivy.legacy.utils.sendToCrashlytics
@@ -83,6 +85,9 @@ class RootActivity : AppCompatActivity(), RootScreen {
     @Inject
     lateinit var dateTimePicker: DateTimePicker
 
+    @Inject
+    lateinit var rivyUi: RivyUi
+
     private lateinit var createFileLauncher: ActivityResultLauncher<String>
     private lateinit var onFileCreated: (fileUri: Uri) -> Unit
 
@@ -99,6 +104,8 @@ class RootActivity : AppCompatActivity(), RootScreen {
         setContent {
             val viewModel: RootViewModel = viewModel()
             val isSystemInDarkTheme = isSystemInDarkTheme()
+            val rivyUiState by rivyUi.state.collectAsState()
+            ApplyRivyPalette(rivyUiState.palette)
 
             LaunchedEffect(isSystemInDarkTheme) {
                 viewModel.start(isSystemInDarkTheme, intent)

@@ -1,6 +1,7 @@
 package com.ivy.settings
 
 import com.ivy.base.legacy.Theme
+import com.ivy.legacy.rivyui.RivyUiState
 
 data class SettingsState(
     val currencyCode: String,
@@ -18,6 +19,7 @@ data class SettingsState(
     val driveShowStatus: Boolean,
     val driveRecentConnected: Boolean,
     val driveSetupStep: Int,
+    val rivyUi: RivyUiState,
 )
 
 sealed interface DriveExportStatus {

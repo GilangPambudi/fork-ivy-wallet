@@ -7,7 +7,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.IntOffset
+import com.ivy.legacy.rivyui.NavStyle
+import com.ivy.legacy.rivyui.RivyUiState
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -84,6 +92,10 @@ fun BoxWithConstraintsScope.BottomBar(
     onAddPlannedPayment: () -> Unit,
 
     showAddAccountModal: () -> Unit,
+
+    style: NavStyle = NavStyle.CLASSIC,
+    tabs: List<MainTab> = RivyUiState.CLASSIC_TABS,
+    hideProgress: Float = 0f,
 ) {
     val ivyContext = ivyWalletCtx()
 
@@ -114,37 +126,54 @@ fun BoxWithConstraintsScope.BottomBar(
         animationSpec = springBounceFast()
     )
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter)
-            .background(pureBlur())
-            .alpha(1f - buttonsShownPercent)
-            .navigationBarsPadding()
-            .clickableNoIndication(rememberInteractionSource()) {
-                // consume click
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Tab(
-            icon = R.drawable.ic_home,
-            name = stringResource(R.string.home),
-            selected = tab == MainTab.HOME,
-            selectedColor = Ivy
-        ) {
-            selectTab(MainTab.HOME)
-        }
+    val hideOffsetPx = hideProgress *
+        (navigationBarInset() + (PILL_HEIGHT + FAB_BUTTON_SIZE + 64.dp).toDensityPx())
 
-        Spacer(Modifier.width(FAB_BUTTON_SIZE))
-
-        Tab(
-            icon = R.drawable.ic_accounts,
-            name = stringResource(R.string.accounts),
-            selected = tab == MainTab.ACCOUNTS,
-            selectedColor = Green
+    if (style == NavStyle.CLASSIC) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .offset { IntOffset(0, hideOffsetPx.roundToInt()) }
+                .background(pureBlur())
+                .alpha(1f - buttonsShownPercent)
+                .navigationBarsPadding()
+                .clickableNoIndication(rememberInteractionSource()) {
+                    // consume click
+                },
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            selectTab(MainTab.ACCOUNTS)
+            Tab(
+                icon = R.drawable.ic_home,
+                name = stringResource(R.string.home),
+                selected = tab == MainTab.HOME,
+                selectedColor = Ivy
+            ) {
+                selectTab(MainTab.HOME)
+            }
+
+            Spacer(Modifier.width(FAB_BUTTON_SIZE))
+
+            Tab(
+                icon = R.drawable.ic_accounts,
+                name = stringResource(R.string.accounts),
+                selected = tab == MainTab.ACCOUNTS,
+                selectedColor = Green
+            ) {
+                selectTab(MainTab.ACCOUNTS)
+            }
         }
+    } else {
+        PillBar(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .offset { IntOffset(0, hideOffsetPx.roundToInt()) }
+                .alpha(1f - buttonsShownPercent),
+            style = style,
+            tabs = tabs,
+            current = tab,
+            selectTab = selectTab,
+        )
     }
 
     if (expandedBackgroundOffset < screenHeightDp) {
@@ -164,6 +193,18 @@ fun BoxWithConstraintsScope.BottomBar(
     val fabStartX = ivyContext.screenWidth / 2 - FAB_BUTTON_SIZE.toDensityPx() / 2
     val fabStartY = ivyContext.screenHeight - navigationBarInset() -
             30.dp.toDensityPx() - FAB_BUTTON_SIZE.toDensityPx()
+    val fabX = when (style) {
+        NavStyle.PILL_FLOAT, NavStyle.PILL_LABEL ->
+            ivyContext.screenWidth - (PILL_MARGIN + FAB_BUTTON_SIZE).toDensityPx()
+        else -> fabStartX
+    }
+    val fabY = hideOffsetPx + when (style) {
+        NavStyle.CLASSIC -> fabStartY
+        NavStyle.PILL_CENTER -> ivyContext.screenHeight - navigationBarInset() -
+            (PILL_MARGIN + PILL_HEIGHT / 2 + FAB_BUTTON_SIZE / 2).toDensityPx()
+        else -> ivyContext.screenHeight - navigationBarInset() -
+            (PILL_MARGIN * 2 + PILL_HEIGHT + FAB_BUTTON_SIZE).toDensityPx()
+    }
 
     TransactionButtons(
         buttonsShownPercent = buttonsShownPercent,
@@ -187,15 +228,15 @@ fun BoxWithConstraintsScope.BottomBar(
                 val placeable = measurable.measure(constraints)
                 layout(placeable.width, placeable.height) {
                     placeable.place(
-                        x = fabStartX.roundToInt(),
-                        y = fabStartY.roundToInt()
+                        x = fabX.roundToInt(),
+                        y = fabY.roundToInt()
                     )
                 }
             }
             .size(FAB_BUTTON_SIZE)
             .rotate(fabRotation)
             .zIndex(200f)
-            .thenIf(tab == MainTab.HOME) {
+            .thenIf(tab != MainTab.ACCOUNTS) {
                 pointerInput(Unit) {
                     detectDragGestures(
                         onDragCancel = {
@@ -240,29 +281,106 @@ fun BoxWithConstraintsScope.BottomBar(
         backgroundPadding = 8.dp,
         icon = R.drawable.ic_add,
         backgroundGradient = when (tab) {
-            MainTab.HOME -> {
-                if (!expanded) GradientIvy else Gradient.solid(UI.colors.gray)
-            }
-
-            MainTab.ACCOUNTS -> {
-                GradientGreen
-            }
+            MainTab.ACCOUNTS -> GradientGreen
+            else -> if (!expanded) GradientIvy else Gradient.solid(UI.colors.gray)
         },
         hasShadow = !expanded,
-        tint = when (tab) {
-            MainTab.HOME -> White
-            MainTab.ACCOUNTS -> White
-        }
+        tint = White
     ) {
         when (tab) {
-            MainTab.HOME -> {
-                expanded = !expanded
-            }
+            MainTab.ACCOUNTS -> showAddAccountModal()
+            else -> expanded = !expanded
+        }
+    }
+}
 
-            MainTab.ACCOUNTS -> {
-                showAddAccountModal()
+private val PILL_HEIGHT = 64.dp
+private val PILL_MARGIN = 16.dp
+
+@Composable
+private fun PillBar(
+    style: NavStyle,
+    tabs: List<MainTab>,
+    current: MainTab,
+    selectTab: (MainTab) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .navigationBarsPadding()
+            .padding(PILL_MARGIN)
+            .fillMaxWidth()
+            .height(PILL_HEIGHT)
+            .shadow(8.dp, CircleShape)
+            .clip(CircleShape)
+            .background(UI.colors.pure)
+            .clickableNoIndication(rememberInteractionSource()) {
+                // consume click
+            }
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        tabs.forEachIndexed { index, tab ->
+            if (style == NavStyle.PILL_CENTER && index == tabs.size / 2) {
+                Spacer(Modifier.width(FAB_BUTTON_SIZE))
+            }
+            PillTab(
+                tab = tab,
+                selected = tab == current,
+                wideIndicator = style == NavStyle.PILL_LABEL,
+            ) {
+                selectTab(tab)
             }
         }
+    }
+}
+
+@Composable
+private fun PillTab(
+    tab: MainTab,
+    selected: Boolean,
+    wideIndicator: Boolean,
+    onClick: () -> Unit,
+) {
+    val (icon, label) = when (tab) {
+        MainTab.HOME -> R.drawable.ic_home to R.string.home
+        MainTab.ACCOUNTS -> R.drawable.ic_accounts to R.string.accounts
+        MainTab.REPORTS -> R.drawable.ic_statistics_s to R.string.reports
+        MainTab.SETTINGS -> R.drawable.ic_settings to R.string.settings
+    }
+    val indicator = UI.colors.primary.copy(alpha = 0.18f)
+    val tint = if (selected) UI.colors.primary else UI.colors.gray
+    Column(
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable(onClick = onClick)
+            .thenIf(wideIndicator && selected) { background(indicator) }
+            .padding(horizontal = if (wideIndicator) 12.dp else 4.dp, vertical = 4.dp)
+            .testTag("pill_tab_${tab.name.lowercase()}"),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(width = 48.dp, height = 28.dp)
+                .clip(CircleShape)
+                .thenIf(!wideIndicator && selected) { background(indicator) },
+            contentAlignment = Alignment.Center,
+        ) {
+            IvyIcon(
+                modifier = Modifier.size(22.dp),
+                icon = icon,
+                tint = tint,
+            )
+        }
+        Text(
+            text = stringResource(label),
+            style = UI.typo.c.style(
+                fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.SemiBold,
+                color = if (selected) UI.colors.pureInverse else UI.colors.gray,
+            ),
+            maxLines = 1,
+        )
     }
 }
 

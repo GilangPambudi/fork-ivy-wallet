@@ -170,16 +170,6 @@ fun BoxWithConstraintsScope.HomeUi(
                     setMoreMenuExpanded(true)
                 }
             )
-            .horizontalSwipeListener(
-                sensitivity = SWIPE_HORIZONTAL_THRESHOLD,
-                state = rememberSwipeListenerState(),
-                onSwipeLeft = {
-                    ivyContext.selectMainTab(MainTab.ACCOUNTS)
-                },
-                onSwipeRight = {
-                    ivyContext.selectMainTab(MainTab.ACCOUNTS)
-                }
-            )
     ) {
         val listState = rememberScrollPositionListState(
             key = "home_lazy_column",

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
+import com.ivy.design.l0_system.RivyPalette
 import com.ivy.design.l0_system.UI
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
@@ -22,13 +23,13 @@ val Black = Color(0xFF111114)
 
 // Primary
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val Ivy = Color(0xFF6B4DFF)
+val Ivy: Color get() = RivyPalette.primary
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Blue = Color(0xFF4CC3FF)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val Green = Color(0xFF14CC9E)
+val Green: Color get() = RivyPalette.accent
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Orange = Color(0xFFF29F30)
@@ -89,13 +90,13 @@ val GradientRed = Gradient(Red, Color(0xFFFF99AB))
 val GradientPurple = Gradient(Purple, Color(0xFFED3EF7))
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val GradientGreen = Gradient(Green, Color(0xFF49F2C8))
+val GradientGreen: Gradient get() = Gradient(Green, RivyPalette.accentEnd)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val GradientOrangeRevert = Gradient(Color(0xFFF2CD9E), Orange)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val GradientIvy = Gradient(Ivy, Color(0xFFAA99FF))
+val GradientIvy: Gradient get() = Gradient(Ivy, RivyPalette.primaryEnd)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 fun Modifier.gradientCutBackgroundTop(

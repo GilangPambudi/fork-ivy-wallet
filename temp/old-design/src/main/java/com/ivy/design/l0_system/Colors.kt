@@ -16,10 +16,10 @@ val Black = Color(0xFF111114)
 
 // Primary
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val Ivy = Color(0xFF6B4DFF)
+val Ivy: Color get() = RivyPalette.primary
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val Purple = Color(0xFF6B4DFF)
+val Purple: Color get() = RivyPalette.primary
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Purple1 = Color(0xFFC34CFF)
@@ -37,7 +37,7 @@ val Blue2 = Color(0xFF45E6E6)
 val Blue3 = Color(0xFF457BE6)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val Green = Color(0xFF14CC9E)
+val Green: Color get() = RivyPalette.accent
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 val Green2 = Color(0xFF45E67B)
@@ -190,7 +190,7 @@ val MediumWhite = Color(0xFFEFEEF0)
 val Transparent = Color(0x00000000)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
-val GradientGreen = Gradient(Green, Color(0xFF49F2C8))
+val GradientGreen: Gradient get() = Gradient(Green, RivyPalette.accentEnd)
 
 @Deprecated("Old design system. Use `:ivy-design` and Material3")
 @Immutable

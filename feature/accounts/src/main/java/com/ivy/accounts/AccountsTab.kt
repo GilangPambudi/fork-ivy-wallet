@@ -94,17 +94,7 @@ private fun BoxWithConstraintsScope.UI(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .navigationBarsPadding()
-            .horizontalSwipeListener(
-                sensitivity = 200,
-                state = rememberSwipeListenerState(),
-                onSwipeLeft = {
-                    ivyContext.selectMainTab(com.ivy.legacy.data.model.MainTab.HOME)
-                },
-                onSwipeRight = {
-                    ivyContext.selectMainTab(com.ivy.legacy.data.model.MainTab.HOME)
-                }
-            ),
+            .navigationBarsPadding(),
         state = listState
     ) {
         item {

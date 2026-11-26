@@ -9,6 +9,14 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
 }
 
+val gitCommitCount = providers.exec {
+    commandLine("git", "rev-list", "--count", "HEAD")
+}.standardOutput.asText.map { it.trim().toInt() }
+
+val gitCommitDate = providers.exec {
+    commandLine("git", "log", "-1", "--format=%cd", "--date=format:%Y.%m.%d")
+}.standardOutput.asText.map { it.trim() }
+
 android {
     namespace = "com.ivy.wallet"
     compileSdk = libs.versions.compile.sdk.get().toInt()
@@ -17,8 +25,8 @@ android {
         applicationId = "dev.pambudi.ivy.wallet"
         minSdk = libs.versions.min.sdk.get().toInt()
         targetSdk = libs.versions.compile.sdk.get().toInt()
-        versionName = libs.versions.version.name.get()
-        versionCode = libs.versions.version.code.get().toInt()
+        versionName = gitCommitDate.get()
+        versionCode = gitCommitCount.get()
     }
 
     androidResources {

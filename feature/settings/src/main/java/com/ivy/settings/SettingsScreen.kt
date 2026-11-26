@@ -68,6 +68,11 @@ import com.ivy.wallet.ui.theme.components.IvySwitch
 import com.ivy.wallet.ui.theme.components.IvyToolbar
 import com.ivy.wallet.ui.theme.modal.ChooseStartDateOfMonthModal
 import com.ivy.wallet.ui.theme.modal.CurrencyModal
+import com.ivy.legacy.data.model.MainTab
+import com.ivy.legacy.rivyui.NavStyle
+import com.ivy.legacy.rivyui.Palette
+import com.ivy.legacy.rivyui.RivyUiState
+import com.ivy.wallet.ui.theme.components.IvyIcon
 import com.ivy.wallet.ui.theme.modal.DeleteModal
 import com.ivy.wallet.ui.theme.modal.IvyModal
 import com.ivy.wallet.ui.theme.modal.ModalSet
@@ -103,6 +108,8 @@ fun BoxWithConstraintsScope.SettingsScreen() {
         driveShowStatus = uiState.driveShowStatus,
         driveRecentConnected = uiState.driveRecentConnected,
         driveSetupStep = uiState.driveSetupStep,
+        rivyUi = uiState.rivyUi,
+        onRivyUiEvent = viewModel::onEvent,
         onAddRecentDriveFile = {
             viewModel.onEvent(SettingsEvent.AddRecentDriveFile)
         },
@@ -190,6 +197,8 @@ private fun BoxWithConstraintsScope.UI(
     onAddRecentDriveFile: () -> Unit = {},
     onPickDriveFile: (Int) -> Unit = {},
     onCloseDriveSetup: () -> Unit = {},
+    rivyUi: RivyUiState? = null,
+    onRivyUiEvent: (SettingsEvent) -> Unit = {},
     onSetDriveShowStatus: (Boolean) -> Unit = {},
     onConnectDriveExport: () -> Unit = {},
     onRunDriveExport: () -> Unit = {},
@@ -213,6 +222,7 @@ private fun BoxWithConstraintsScope.UI(
     var deleteCloudDataModalVisible by remember { mutableStateOf(false) }
     var deleteAllDataModalVisible by remember { mutableStateOf(false) }
     var deleteAllDataModalFinalVisible by remember { mutableStateOf(false) }
+    var appearanceModal by remember { mutableStateOf(AppearanceModal.NONE) }
     val nav = navigation()
 
     LazyColumn(
@@ -231,7 +241,7 @@ private fun BoxWithConstraintsScope.UI(
                 val rootScreen = rootScreen()
                 Text(
                     modifier = Modifier.clickable {
-                        nav.navigateTo(ReleasesScreen)
+                        rootScreen.openUrlInBrowser(Constants.URL_RIVY_REPO)
                     },
                     text = "${rootScreen.buildVersionName} (${rootScreen.buildVersionCode})",
                     style = UI.typo.nC.style(
@@ -345,6 +355,16 @@ private fun BoxWithConstraintsScope.UI(
             }
 
             Spacer(Modifier.height(12.dp))
+
+            if (rivyUi != null) {
+                RivyAppearance(
+                    state = rivyUi,
+                    onOpen = { appearanceModal = it },
+                    onSetAutoHide = { onRivyUiEvent(SettingsEvent.SetNavAutoHide(it)) },
+                )
+
+                Spacer(Modifier.height(12.dp))
+            }
 
             val nav = navigation()
 //            SettingsDefaultButton(
@@ -470,45 +490,6 @@ private fun BoxWithConstraintsScope.UI(
         }
 
         item {
-            SettingsSectionDivider(text = stringResource(R.string.product))
-
-            Spacer(Modifier.height(16.dp))
-
-            HelpCenter()
-
-            Spacer(Modifier.height(12.dp))
-
-            Releases(nav = nav)
-
-            Spacer(Modifier.height(12.dp))
-
-            ReportBug()
-
-            Spacer(Modifier.height(12.dp))
-
-            val rootActivity = rootScreen()
-            RequestFeature {
-                rootActivity.openUrlInBrowser(Constants.URL_GITHUB_NEW_ISSUE)
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            ContactSupport()
-
-            Spacer(Modifier.height(12.dp))
-
-            Contributors(nav = nav)
-
-            Spacer(Modifier.height(12.dp))
-
-            Attributions()
-
-            Spacer(Modifier.height(12.dp))
-
-            TCAndPrivacyPolicy()
-        }
-
-        item {
             SettingsSectionDivider(
                 text = stringResource(R.string.danger_zone),
                 color = Red
@@ -607,6 +588,225 @@ private fun BoxWithConstraintsScope.UI(
         onPick = onPickDriveFile,
         onClose = onCloseDriveSetup,
     )
+
+    if (rivyUi != null) {
+        AppearanceModals(
+            open = appearanceModal,
+            state = rivyUi,
+            onEvent = onRivyUiEvent,
+            onClose = { appearanceModal = AppearanceModal.NONE },
+        )
+    }
+}
+
+private enum class AppearanceModal { NONE, NAV_STYLE, TAB_ORDER, PALETTE }
+
+@Composable
+private fun RivyAppearance(
+    state: RivyUiState,
+    onOpen: (AppearanceModal) -> Unit,
+    onSetAutoHide: (Boolean) -> Unit,
+) {
+    SettingsDefaultButton(
+        icon = R.drawable.ic_vue_design_color_swatch,
+        text = stringResource(R.string.rivy_palette),
+        iconPadding = 6.dp,
+        description = stringResource(state.palette.label()),
+    ) {
+        onOpen(AppearanceModal.PALETTE)
+    }
+
+    Spacer(Modifier.height(12.dp))
+
+    SettingsDefaultButton(
+        icon = R.drawable.ic_home,
+        text = stringResource(R.string.rivy_nav_style),
+        iconPadding = 6.dp,
+        description = stringResource(state.navStyle.label()),
+    ) {
+        onOpen(AppearanceModal.NAV_STYLE)
+    }
+
+    if (state.navStyle != NavStyle.CLASSIC) {
+        Spacer(Modifier.height(12.dp))
+
+        SettingsDefaultButton(
+            icon = R.drawable.ic_accounts,
+            text = stringResource(R.string.rivy_tab_order),
+            iconPadding = 6.dp,
+            description = state.tabOrder.map { stringResource(it.label()) }.joinToString(" · "),
+        ) {
+            onOpen(AppearanceModal.TAB_ORDER)
+        }
+    }
+
+    Spacer(Modifier.height(12.dp))
+
+    AppSwitch(
+        lockApp = state.autoHide,
+        onSetLockApp = onSetAutoHide,
+        text = stringResource(R.string.rivy_nav_auto_hide),
+        description = stringResource(R.string.rivy_nav_auto_hide_description),
+        icon = R.drawable.ic_hide_m,
+    )
+}
+
+@Composable
+private fun BoxWithConstraintsScope.AppearanceModals(
+    open: AppearanceModal,
+    state: RivyUiState,
+    onEvent: (SettingsEvent) -> Unit,
+    onClose: () -> Unit,
+) {
+    IvyModal(
+        id = null,
+        visible = open != AppearanceModal.NONE,
+        dismiss = onClose,
+        PrimaryAction = {
+            ModalSet(label = stringResource(R.string.rivy_done), onClick = onClose)
+        },
+    ) {
+        Spacer(Modifier.height(32.dp))
+
+        ModalTitle(
+            text = stringResource(
+                when (open) {
+                    AppearanceModal.TAB_ORDER -> R.string.rivy_tab_order
+                    AppearanceModal.PALETTE -> R.string.rivy_palette
+                    else -> R.string.rivy_nav_style
+                }
+            )
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        when (open) {
+            AppearanceModal.NAV_STYLE -> NavStyle.entries.forEach { style ->
+                ChoiceRow(
+                    text = stringResource(style.label()),
+                    selected = style == state.navStyle,
+                ) { onEvent(SettingsEvent.SetNavStyle(style)) }
+            }
+
+            AppearanceModal.PALETTE -> Palette.entries.forEach { palette ->
+                ChoiceRow(
+                    text = stringResource(palette.label()),
+                    selected = palette == state.palette,
+                ) { onEvent(SettingsEvent.SetPalette(palette)) }
+            }
+
+            AppearanceModal.TAB_ORDER -> {
+                Text(
+                    modifier = Modifier.padding(horizontal = 32.dp),
+                    text = stringResource(R.string.rivy_tab_order_description),
+                    style = UI.typo.c.style(color = UI.colors.gray, fontWeight = FontWeight.SemiBold),
+                )
+                Spacer(Modifier.height(8.dp))
+                state.tabOrder.forEachIndexed { index, tab ->
+                    TabOrderRow(
+                        text = stringResource(tab.label()),
+                        canMoveUp = index > 0,
+                        canMoveDown = index < state.tabOrder.lastIndex,
+                        onMove = { by -> onEvent(SettingsEvent.MoveTab(tab, by)) },
+                    )
+                }
+            }
+
+            AppearanceModal.NONE -> Unit
+        }
+
+        Spacer(Modifier.height(24.dp))
+    }
+}
+
+@Composable
+private fun ChoiceRow(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clip(UI.shapes.r4)
+            .background(if (selected) UI.colors.primary.copy(alpha = 0.14f) else UI.colors.medium)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = text,
+            style = UI.typo.b2.style(
+                color = if (selected) UI.colors.primary else UI.colors.pureInverse,
+                fontWeight = FontWeight.Bold,
+            ),
+        )
+        if (selected) {
+            IvyIcon(icon = R.drawable.ic_check, tint = UI.colors.primary)
+        }
+    }
+}
+
+@Composable
+private fun TabOrderRow(
+    text: String,
+    canMoveUp: Boolean,
+    canMoveDown: Boolean,
+    onMove: (Int) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .clip(UI.shapes.r4)
+            .background(UI.colors.medium)
+            .padding(start = 16.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = text,
+            style = UI.typo.b2.style(color = UI.colors.pureInverse, fontWeight = FontWeight.Bold),
+        )
+        IvyIcon(
+            modifier = Modifier
+                .clip(UI.shapes.rFull)
+                .clickable(enabled = canMoveUp) { onMove(-1) }
+                .padding(8.dp),
+            icon = R.drawable.ic_expand_less,
+            tint = if (canMoveUp) UI.colors.pureInverse else UI.colors.gray,
+        )
+        IvyIcon(
+            modifier = Modifier
+                .clip(UI.shapes.rFull)
+                .clickable(enabled = canMoveDown) { onMove(1) }
+                .padding(8.dp),
+            icon = R.drawable.ic_expand_more,
+            tint = if (canMoveDown) UI.colors.pureInverse else UI.colors.gray,
+        )
+    }
+}
+
+private fun NavStyle.label(): Int = when (this) {
+    NavStyle.CLASSIC -> R.string.rivy_nav_classic
+    NavStyle.PILL_FLOAT -> R.string.rivy_nav_pill_float
+    NavStyle.PILL_LABEL -> R.string.rivy_nav_pill_label
+    NavStyle.PILL_CENTER -> R.string.rivy_nav_pill_center
+}
+
+private fun Palette.label(): Int = when (this) {
+    Palette.ORIGINAL -> R.string.rivy_palette_original
+    Palette.RIVY -> R.string.rivy_palette_rivy
+    Palette.WALLPAPER -> R.string.rivy_palette_wallpaper
+}
+
+private fun MainTab.label(): Int = when (this) {
+    MainTab.HOME -> R.string.home
+    MainTab.ACCOUNTS -> R.string.accounts
+    MainTab.REPORTS -> R.string.reports
+    MainTab.SETTINGS -> R.string.settings
 }
 
 @Composable
@@ -726,87 +926,6 @@ private fun CustomFeatures(
                 fontWeight = FontWeight.Bold
             )
         )
-    }
-}
-
-@Composable
-private fun HelpCenter() {
-    val uriHandler = LocalUriHandler.current
-    SettingsDefaultButton(
-        icon = R.drawable.ic_custom_education_m,
-        text = stringResource(R.string.help_center),
-    ) {
-        uriHandler.openUri(Constants.URL_HELP_CENTER)
-    }
-}
-
-@Composable
-private fun ReportBug() {
-    val uriHandler = LocalUriHandler.current
-    SettingsDefaultButton(
-        icon = R.drawable.ic_vue_dev_arrow,
-        text = stringResource(R.string.report_bug),
-        iconPadding = 10.dp,
-    ) {
-        uriHandler.openUri(Constants.URL_GITHUB_NEW_ISSUE)
-    }
-}
-
-@Composable
-private fun RequestFeature(
-    onClick: () -> Unit
-) {
-    SettingsDefaultButton(
-        icon = R.drawable.ic_custom_programming_m,
-        text = stringResource(R.string.request_a_feature),
-    ) {
-        onClick()
-    }
-}
-
-@Composable
-private fun ContactSupport() {
-    val rootActivity = rootScreen()
-    SettingsDefaultButton(
-        icon = R.drawable.ic_support,
-        text = stringResource(R.string.contact_support),
-    ) {
-        rootActivity.openUrlInBrowser(Constants.URL_IVY_TELEGRAM_INVITE)
-    }
-}
-
-@Composable
-private fun Releases(nav: Navigation) {
-    SettingsDefaultButton(
-        icon = R.drawable.ic_vue_money_tag,
-        text = stringResource(R.string.releases),
-        iconPadding = 8.dp
-    ) {
-        nav.navigateTo(ReleasesScreen)
-    }
-}
-
-@Composable
-private fun Contributors(nav: Navigation) {
-    SettingsDefaultButton(
-        icon = R.drawable.ic_vue_people_people,
-        text = stringResource(R.string.project_contributors),
-        iconPadding = 8.dp
-    ) {
-        nav.navigateTo(ContributorsScreen)
-    }
-}
-
-@Composable
-private fun Attributions() {
-    val nav = navigation()
-
-    SettingsDefaultButton(
-        icon = R.drawable.ic_vue_location_global,
-        text = stringResource(R.string.attributions),
-        iconPadding = 6.dp
-    ) {
-        nav.navigateTo(AttributionsScreen)
     }
 }
 
@@ -1036,56 +1155,6 @@ private fun ExportCSV(
     }
 }
 
-@Composable
-private fun TCAndPrivacyPolicy() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Spacer(Modifier.width(16.dp))
-
-        val uriHandler = LocalUriHandler.current
-
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .clip(UI.shapes.rFull)
-                .border(2.dp, UI.colors.medium, UI.shapes.rFull)
-                .clickable {
-                    uriHandler.openUri(Constants.URL_TC)
-                }
-                .padding(vertical = 14.dp),
-            text = stringResource(R.string.terms_conditions),
-            style = UI.typo.c.style(
-                fontWeight = FontWeight.ExtraBold,
-                color = UI.colors.pureInverse,
-                textAlign = TextAlign.Center
-            )
-        )
-
-        Spacer(Modifier.width(12.dp))
-
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .clip(UI.shapes.rFull)
-                .border(2.dp, UI.colors.medium, UI.shapes.rFull)
-                .clickable {
-                    uriHandler.openUri(Constants.URL_PRIVACY_POLICY)
-                }
-                .padding(vertical = 14.dp),
-            text = stringResource(R.string.privacy_policy),
-            style = UI.typo.c.style(
-                fontWeight = FontWeight.ExtraBold,
-                color = UI.colors.pureInverse,
-                textAlign = TextAlign.Center
-            )
-        )
-
-        Spacer(Modifier.width(16.dp))
-    }
-}
 
 @Composable
 private fun SettingsPrimaryButton(

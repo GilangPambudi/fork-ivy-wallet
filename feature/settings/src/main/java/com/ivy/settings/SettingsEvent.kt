@@ -1,6 +1,9 @@
 package com.ivy.settings
 
 import com.ivy.domain.RootScreen
+import com.ivy.legacy.data.model.MainTab
+import com.ivy.legacy.rivyui.NavStyle
+import com.ivy.legacy.rivyui.Palette
 
 sealed interface SettingsEvent {
     data class SetCurrency(val newCurrency: String) : SettingsEvent
@@ -23,6 +26,10 @@ sealed interface SettingsEvent {
     data object AddRecentDriveFile : SettingsEvent
     data class PickDriveFile(val step: Int) : SettingsEvent
     data object CloseDriveSetup : SettingsEvent
+    data class SetNavStyle(val style: NavStyle) : SettingsEvent
+    data class SetPalette(val palette: Palette) : SettingsEvent
+    data class SetNavAutoHide(val autoHide: Boolean) : SettingsEvent
+    data class MoveTab(val tab: MainTab, val by: Int) : SettingsEvent
     data object RunDriveExport : SettingsEvent
     data object DisconnectDriveExport : SettingsEvent
     data class SetDriveShowStatus(val show: Boolean) : SettingsEvent
