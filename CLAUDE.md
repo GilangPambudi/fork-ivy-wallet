@@ -35,8 +35,14 @@ deleted from GitHub on 2026-11-26 at the owner's request.
 - Colors: keep purple, no green. Preferred font: Figtree, not applied yet.
 - Firebase is removed, because its config file belonged to the old
   application ID. Crash reporting calls are no-ops and polls are switched off.
-- Ivy's Play Store, share, Telegram and review buttons are removed; the
-  open-source card credits Ivy Wallet.
+- Ivy's Play Store, Telegram and review buttons are removed; the
+  open-source card credits Ivy Wallet. The Home more-menu has "Share Rivy",
+  which shares this repository's GitHub link.
+- Settings has navbar styles (classic and pill variants, tab order by
+  long-press drag, auto-hide), a color palette option, and a version label
+  linking to this repository. Settings "Product" is removed.
+- In pill styles the active indicator slides with the swipe between tabs. The
+  + button stays on Reports and Settings but is grayed out and disabled.
 - Amount keypad bottom row for IDR: `000`, `0`, backspace.
 
 ## Drive export
@@ -90,11 +96,6 @@ update signed with the same key, so the owner must keep a backup of both.
 
 ## Open items
 
-- UI requests waiting their turn, each mockup first: hide Settings "Product"
-  and point the version label to this repo with a CI date version (versionCode
-  must stay >= 206), color palette option, navbar styles with tab order and
-  auto-hide, WhatsApp-like swipe between tabs.
-- The Home more-menu still has a "Share Ivy" button.
 - The import screen lists "Ivy Wallet" with Ivy's logo on purpose, as another
   app to import from.
 - `docs/` is still upstream's.
