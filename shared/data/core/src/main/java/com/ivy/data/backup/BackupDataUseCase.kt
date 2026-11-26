@@ -75,11 +75,12 @@ class BackupDataUseCase @Inject constructor(
     private val tagAssociationWriter: WriteTagAssociationDao
 ) {
     suspend fun exportToFile(
-        zipFileUri: Uri
+        zipFileUri: Uri,
+        mode: String = "w",
     ) {
         val jsonString = generateJsonBackup()
         val file = createJsonDataFile(jsonString)
-        zip(context = context, zipFileUri, listOf(file))
+        zip(context = context, zipFileUri, listOf(file), mode)
         clearCacheDir()
     }
 

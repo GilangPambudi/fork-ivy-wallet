@@ -1,7 +1,13 @@
 package com.ivy.importdata.csvimport.flow
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.draw.clip
+import com.ivy.importdata.csvimport.BackupLinkOffer
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +48,9 @@ fun ImportResultUI(
     launchedFromOnboarding: Boolean,
     isManualCsvImport: Boolean = false,
     onTryAgain: (() -> Unit)? = null,
+    backupLinkOffer: BackupLinkOffer? = null,
+    onLinkBackup: () -> Unit = {},
+    onDeclineBackupLink: () -> Unit = {},
     onFinish: () -> Unit,
 ) {
     Column(
@@ -129,6 +138,15 @@ fun ImportResultUI(
 
         Spacer(Modifier.weight(1f))
 
+        if (backupLinkOffer != null) {
+            BackupLinkCard(
+                offer = backupLinkOffer,
+                onLink = onLinkBackup,
+                onDecline = onDeclineBackupLink,
+            )
+            Spacer(Modifier.height(16.dp))
+        }
+
         Spacer8()
 
         OnboardingButton(
@@ -159,6 +177,51 @@ fun ImportResultUI(
         }
 
         Spacer(Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun BackupLinkCard(
+    offer: BackupLinkOffer,
+    onLink: () -> Unit,
+    onDecline: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .clip(UI.shapes.r4)
+            .background(UI.colors.medium)
+            .padding(16.dp),
+    ) {
+        Text(
+            text = when (offer) {
+                BackupLinkOffer.Ask -> stringResource(R.string.backup_link_question)
+                BackupLinkOffer.Linked -> stringResource(R.string.backup_link_done)
+                is BackupLinkOffer.Failed -> stringResource(R.string.backup_link_failed, offer.reason)
+            },
+            style = UI.typo.b2.style(
+                color = if (offer is BackupLinkOffer.Failed) Red else UI.colors.pureInverse,
+                fontWeight = FontWeight.Bold,
+            ),
+        )
+        if (offer == BackupLinkOffer.Ask) {
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.backup_link_description),
+                style = UI.typo.c.style(color = Gray, fontWeight = FontWeight.Medium),
+            )
+            Spacer(Modifier.height(12.dp))
+            Row {
+                Button(onClick = onLink) {
+                    Text(text = stringResource(R.string.backup_link_yes))
+                }
+                Spacer(Modifier.width(8.dp))
+                TextButton(onClick = onDecline) {
+                    Text(text = stringResource(R.string.backup_link_no))
+                }
+            }
+        }
     }
 }
 

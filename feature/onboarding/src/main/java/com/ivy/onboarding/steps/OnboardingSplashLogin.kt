@@ -70,6 +70,7 @@ import kotlin.math.roundToInt
 fun BoxWithConstraintsScope.OnboardingSplashLogin(
     onboardingState: OnboardingState,
     onSkip: () -> Unit,
+    onRestoreFromDrive: () -> Unit = {},
 ) {
     var internalSwitch by remember { mutableStateOf(true) }
 
@@ -231,7 +232,8 @@ fun BoxWithConstraintsScope.OnboardingSplashLogin(
 
         LoginSection(
             percentTransition = percentTransition,
-            onSkip = onSkip
+            onSkip = onSkip,
+            onRestoreFromDrive = onRestoreFromDrive,
         )
     }
 }
@@ -258,7 +260,8 @@ private fun Modifier.animateXCenterToLeft(
 @Composable
 private fun LoginSection(
     percentTransition: Float,
-    onSkip: () -> Unit
+    onSkip: () -> Unit,
+    onRestoreFromDrive: () -> Unit,
 ) {
     if (percentTransition > 0.01f) {
         Column(
@@ -280,6 +283,18 @@ private fun LoginSection(
                 hasShadow = false
             ) {
                 onSkip()
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            LoginButton(
+                icon = R.drawable.ic_vue_weather_cloud,
+                text = stringResource(R.string.restore_from_drive),
+                textColor = UI.colors.pureInverse,
+                backgroundGradient = Gradient.solid(UI.colors.medium),
+                hasShadow = false
+            ) {
+                onRestoreFromDrive()
             }
 
             Spacer(Modifier.weight(3f))

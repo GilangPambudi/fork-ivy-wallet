@@ -15,6 +15,7 @@ import androidx.work.WorkerParameters
 import com.ivy.base.legacy.SharedPrefs
 import com.ivy.base.time.TimeConverter
 import com.ivy.base.time.TimeProvider
+import com.ivy.data.backup.BackupDataUseCase
 import com.ivy.data.db.IvyRoomDatabase
 import com.ivy.data.file.FileSystem
 import com.ivy.data.model.Account
@@ -43,6 +44,9 @@ data class DriveExportState(
     val lastError: String?,
     val showStatus: Boolean = true,
     val recentConnected: Boolean = false,
+    val backupConnected: Boolean = false,
+    val backupLastSuccess: Instant? = null,
+    val backupLastError: String? = null,
 )
 
 @Singleton
@@ -56,6 +60,7 @@ class DriveExport @Inject constructor(
     private val fileSystem: FileSystem,
     private val timeProvider: TimeProvider,
     private val timeConverter: TimeConverter,
+    private val backupDataUseCase: BackupDataUseCase,
 ) {
     private val workManager get() = WorkManager.getInstance(context)
 
@@ -65,6 +70,14 @@ class DriveExport @Inject constructor(
     fun fileUri(): Uri? = uri(KEY_URI)
 
     private fun recentFileUri(): Uri? = uri(KEY_URI_RECENT)
+
+    private fun backupUri(): Uri? = uri(KEY_URI_BACKUP)
+
+    private fun anyConnected() = fileUri() != null || backupUri() != null
+
+    private fun instant(key: String): Instant? = sharedPrefs.getLong(key, 0L)
+        .takeIf { it > 0L }
+        ?.let(Instant::ofEpochMilli)
 
     private fun uri(key: String): Uri? = sharedPrefs.getString(key, null)?.let(Uri::parse)
 
@@ -81,6 +94,9 @@ class DriveExport @Inject constructor(
         lastError = lastError(),
         showStatus = sharedPrefs.getBoolean(KEY_SHOW_STATUS, true),
         recentConnected = recentFileUri() != null,
+        backupConnected = backupUri() != null,
+        backupLastSuccess = instant(KEY_BACKUP_LAST_SUCCESS),
+        backupLastError = sharedPrefs.getString(KEY_BACKUP_LAST_ERROR, null),
     )
 
     fun setShowStatus(show: Boolean) {
@@ -96,7 +112,31 @@ class DriveExport @Inject constructor(
                 }
             }
         )
-        if (fileUri() != null) scheduleDaily()
+        if (anyConnected()) scheduleDaily()
+    }
+
+    fun connectBackup(uri: Uri) {
+        takePermission(uri)
+        sharedPrefs.putString(KEY_URI_BACKUP, uri.toString())
+        sharedPrefs.remove(KEY_BACKUP_LAST_SUCCESS)
+        sharedPrefs.remove(KEY_BACKUP_LAST_ERROR)
+        _state.value = readState(running = false)
+        scheduleDaily()
+    }
+
+    fun disconnectBackup() {
+        backupUri()?.let { uri ->
+            runCatching { context.contentResolver.releasePersistableUriPermission(uri, URI_FLAGS) }
+        }
+        listOf(KEY_URI_BACKUP, KEY_BACKUP_LAST_SUCCESS, KEY_BACKUP_LAST_ERROR).forEach(sharedPrefs::remove)
+        cancelWorkIfIdle()
+        _state.value = readState(running = false)
+    }
+
+    private fun cancelWorkIfIdle() {
+        if (anyConnected()) return
+        workManager.cancelUniqueWork(WORK_NAME)
+        workManager.cancelUniqueWork(DAILY_WORK_NAME)
     }
 
     fun connect(uri: Uri) {
@@ -123,13 +163,12 @@ class DriveExport @Inject constructor(
             runCatching { context.contentResolver.releasePersistableUriPermission(uri, URI_FLAGS) }
         }
         listOf(KEY_URI, KEY_URI_RECENT, KEY_LAST_SUCCESS, KEY_LAST_ERROR).forEach(sharedPrefs::remove)
-        workManager.cancelUniqueWork(WORK_NAME)
-        workManager.cancelUniqueWork(DAILY_WORK_NAME)
+        cancelWorkIfIdle()
         _state.value = readState(running = false)
     }
 
     fun schedule(delayMinutes: Long = 1L) {
-        if (fileUri() == null) return
+        if (!anyConnected()) return
         workManager.enqueueUniqueWork(
             WORK_NAME,
             ExistingWorkPolicy.REPLACE,
@@ -148,27 +187,38 @@ class DriveExport @Inject constructor(
     }
 
     suspend fun export(): Boolean {
-        val uri = fileUri() ?: return true
+        val csvUri = fileUri()
+        val zipUri = backupUri()
+        if (csvUri == null && zipUri == null) return true
         _state.value = _state.value.copy(running = true)
         val now = timeProvider.utcNow()
-        val result = runCatching {
-            val balances = accountRepository.findAll().map { account ->
-                account to calcAccBalanceAct(CalcAccBalanceAct.Input(account)).balance.toDouble()
-            }
-            write(uri, balances, now) { findAll() }
-            recentFileUri()?.let { recentUri ->
-                val from = recentFrom()
-                write(recentUri, balances, now) { findAll().filter { it.time >= from } }
-            }
+        val csvResult = csvUri?.let { uri ->
+            runCatching {
+                val balances = accountRepository.findAll().map { account ->
+                    account to calcAccBalanceAct(CalcAccBalanceAct.Input(account)).balance.toDouble()
+                }
+                write(uri, balances, now) { findAll() }
+                recentFileUri()?.let { recentUri ->
+                    val from = recentFrom()
+                    write(recentUri, balances, now) { findAll().filter { it.time >= from } }
+                }
+            }.also { record(it, now, KEY_LAST_SUCCESS, KEY_LAST_ERROR) }
         }
-        result.onSuccess {
-            sharedPrefs.putLong(KEY_LAST_SUCCESS, now.toEpochMilli())
-            sharedPrefs.remove(KEY_LAST_ERROR)
-        }.onFailure {
-            sharedPrefs.putString(KEY_LAST_ERROR, it.message ?: it.javaClass.simpleName)
+        val backupResult = zipUri?.let { uri ->
+            runCatching { backupDataUseCase.exportToFile(uri, mode = "wt") }
+                .also { record(it, now, KEY_BACKUP_LAST_SUCCESS, KEY_BACKUP_LAST_ERROR) }
         }
         _state.value = readState(running = false)
-        return result.isSuccess
+        return csvResult?.isSuccess != false && backupResult?.isSuccess != false
+    }
+
+    private fun record(result: Result<*>, now: Instant, successKey: String, errorKey: String) {
+        result.onSuccess {
+            sharedPrefs.putLong(successKey, now.toEpochMilli())
+            sharedPrefs.remove(errorKey)
+        }.onFailure {
+            sharedPrefs.putString(errorKey, it.message ?: it.javaClass.simpleName)
+        }
     }
 
     private suspend fun write(
@@ -202,6 +252,9 @@ class DriveExport @Inject constructor(
         private const val KEY_LAST_SUCCESS = "drive_export_last_success"
         private const val KEY_LAST_ERROR = "drive_export_last_error"
         private const val KEY_SHOW_STATUS = "drive_export_show_status"
+        private const val KEY_URI_BACKUP = "drive_backup_uri"
+        private const val KEY_BACKUP_LAST_SUCCESS = "drive_backup_last_success"
+        private const val KEY_BACKUP_LAST_ERROR = "drive_backup_last_error"
         private const val WORK_NAME = "drive_export"
         private const val DAILY_WORK_NAME = "drive_export_daily"
         private const val TABLE_TRANSACTIONS = "transactions"

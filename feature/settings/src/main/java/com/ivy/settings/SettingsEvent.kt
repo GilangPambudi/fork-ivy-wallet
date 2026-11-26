@@ -26,6 +26,8 @@ sealed interface SettingsEvent {
     data object AddRecentDriveFile : SettingsEvent
     data class PickDriveFile(val step: Int) : SettingsEvent
     data object CloseDriveSetup : SettingsEvent
+    data object ConnectDriveBackup : SettingsEvent
+    data object DisconnectDriveBackup : SettingsEvent
     data class SetNavStyle(val style: NavStyle) : SettingsEvent
     data class SetPalette(val palette: Palette) : SettingsEvent
     data class SetNavAutoHide(val autoHide: Boolean) : SettingsEvent

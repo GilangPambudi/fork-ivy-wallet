@@ -14,8 +14,8 @@ import java.util.zip.ZipOutputStream
 private const val MODE_WRITE = "w"
 private const val MODE_READ = "r"
 
-fun zip(context: Context, zipFile: Uri, files: List<File>) {
-    context.contentResolver.openFileDescriptor(zipFile, MODE_WRITE).use { descriptor ->
+fun zip(context: Context, zipFile: Uri, files: List<File>, mode: String = MODE_WRITE) {
+    context.contentResolver.openFileDescriptor(zipFile, mode).use { descriptor ->
         descriptor?.fileDescriptor?.let {
             ZipOutputStream(BufferedOutputStream(FileOutputStream(it))).use { outStream ->
                 zip(outStream, files)

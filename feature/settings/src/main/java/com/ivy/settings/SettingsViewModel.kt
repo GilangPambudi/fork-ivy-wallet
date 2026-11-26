@@ -103,6 +103,7 @@ class SettingsViewModel @Inject constructor(
             driveRecentConnected = driveExport.state.collectAsState().value.recentConnected,
             driveSetupStep = driveSetupStep.intValue,
             rivyUi = rivyUi.state.collectAsState().value,
+            driveState = driveExport.state.collectAsState().value,
         )
     }
 
@@ -135,7 +136,14 @@ class SettingsViewModel @Inject constructor(
 
     private fun pickDriveFile(step: Int) {
         driveSetupStep.intValue = 0
-        if (step == 1) {
+        if (step == 3) {
+            ivyContext.createNewFile(DRIVE_BACKUP_FILE) { fileUri ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    runCatching { driveExport.connectBackup(fileUri) }
+                    runDriveExportNow()
+                }
+            }
+        } else if (step == 1) {
             ivyContext.createNewFile(DRIVE_FILE) { fileUri ->
                 val connected = runCatching { driveExport.connect(fileUri) }
                     .onFailure {
@@ -304,6 +312,8 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.AddRecentDriveFile -> driveSetupStep.intValue = 2
             is SettingsEvent.PickDriveFile -> pickDriveFile(event.step)
             SettingsEvent.CloseDriveSetup -> driveSetupStep.intValue = 0
+            SettingsEvent.ConnectDriveBackup -> driveSetupStep.intValue = 3
+            SettingsEvent.DisconnectDriveBackup -> driveExport.disconnectBackup()
             is SettingsEvent.SetNavStyle -> rivyUi.setNavStyle(event.style)
             is SettingsEvent.SetPalette -> rivyUi.setPalette(event.palette)
             is SettingsEvent.SetNavAutoHide -> rivyUi.setAutoHide(event.autoHide)
@@ -489,3 +499,4 @@ class SettingsViewModel @Inject constructor(
 
 private const val DRIVE_FILE = "rivy.csv"
 private const val DRIVE_RECENT_FILE = "rivy-terbaru.csv"
+private const val DRIVE_BACKUP_FILE = "rivy-backup.zip"

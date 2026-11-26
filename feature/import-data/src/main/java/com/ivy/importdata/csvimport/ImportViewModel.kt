@@ -18,6 +18,7 @@ import com.ivy.wallet.domain.deprecated.logic.csv.CSVMapper
 import com.ivy.wallet.domain.deprecated.logic.csv.CSVNormalizer
 import com.ivy.data.file.FileSystem
 import com.ivy.data.backup.ImportResult
+import com.ivy.legacy.driveexport.DriveExport
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -33,8 +34,26 @@ class ImportViewModel @Inject constructor(
     private val csvNormalizer: CSVNormalizer,
     private val csvMapper: CSVMapper,
     private val csvImporter: CSVImporter,
-    private val backupDataUseCase: BackupDataUseCase
+    private val backupDataUseCase: BackupDataUseCase,
+    private val driveExport: DriveExport,
 ) : ViewModel() {
+    private val _backupLinkOffer = MutableLiveData<BackupLinkOffer?>(null)
+    val backupLinkOffer = _backupLinkOffer.asLiveData()
+    private var restoredBackupUri: Uri? = null
+
+    fun linkBackup() {
+        val uri = restoredBackupUri ?: return
+        _backupLinkOffer.value = runCatching { driveExport.connectBackup(uri) }
+            .fold(
+                onSuccess = { BackupLinkOffer.Linked },
+                onFailure = { BackupLinkOffer.Failed(it.message ?: it.javaClass.simpleName) },
+            )
+    }
+
+    fun declineBackupLink() {
+        _backupLinkOffer.value = null
+    }
+
     private val _importStep = MutableLiveData<ImportStep>()
     val importStep = _importStep.asLiveData()
 
@@ -90,6 +109,11 @@ class ImportViewModel @Inject constructor(
                         com.ivy.legacy.utils.uiThread {
                             _importProgressPercent.value =
                                 (progressPercent * 100).roundToInt()
+                        }
+                    }.also { result ->
+                        if (result.transactionsImported > 0 && !driveExport.state.value.backupConnected) {
+                            restoredBackupUri = fileUri
+                            _backupLinkOffer.value = BackupLinkOffer.Ask
                         }
                     }
                 }
@@ -195,6 +219,8 @@ class ImportViewModel @Inject constructor(
 
     private fun resetState() {
         _importStep.value = ImportStep.IMPORT_FROM
+        _backupLinkOffer.value = null
+        restoredBackupUri = null
     }
 
     private suspend fun hasCSVExtension(

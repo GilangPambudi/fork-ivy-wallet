@@ -27,6 +27,7 @@ fun BoxWithConstraintsScope.ImportCSVScreen(screen: ImportScreen) {
     val importType by viewModel.importType.observeAsState()
     val importProgressPercent by viewModel.importProgressPercent.observeAsState(0)
     val importResult by viewModel.importResult.observeAsState()
+    val backupLinkOffer by viewModel.backupLinkOffer.observeAsState()
 
     val onboardingViewModel: OnboardingViewModel = viewModel()
 
@@ -41,6 +42,9 @@ fun BoxWithConstraintsScope.ImportCSVScreen(screen: ImportScreen) {
         importType = importType,
         importProgressPercent = importProgressPercent,
         importResult = importResult,
+        backupLinkOffer = backupLinkOffer,
+        onLinkBackup = viewModel::linkBackup,
+        onDeclineBackupLink = viewModel::declineBackupLink,
 
         onChooseImportType = viewModel::setImportType,
         onUploadCSVFile = { viewModel.uploadFile(context) },
@@ -68,6 +72,9 @@ private fun BoxWithConstraintsScope.UI(
     importType: ImportType?,
     importProgressPercent: Int,
     importResult: ImportResult?,
+    backupLinkOffer: BackupLinkOffer? = null,
+    onLinkBackup: () -> Unit = {},
+    onDeclineBackupLink: () -> Unit = {},
 
     onChooseImportType: (ImportType) -> Unit = {},
     onUploadCSVFile: () -> Unit = {},
@@ -103,6 +110,9 @@ private fun BoxWithConstraintsScope.UI(
             ImportResultUI(
                 result = importResult!!,
                 launchedFromOnboarding = screen.launchedFromOnboarding,
+                backupLinkOffer = backupLinkOffer,
+                onLinkBackup = onLinkBackup,
+                onDeclineBackupLink = onDeclineBackupLink,
             ) {
                 onFinish()
             }

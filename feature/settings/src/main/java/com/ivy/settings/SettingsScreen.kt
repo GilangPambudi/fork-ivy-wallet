@@ -78,7 +78,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.zIndex
 import com.ivy.legacy.data.model.MainTab
+import com.ivy.legacy.driveexport.DriveExportState
 import com.ivy.legacy.rivyui.NavStyle
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import com.ivy.legacy.rivyui.Palette
 import com.ivy.legacy.rivyui.RivyUiState
 import com.ivy.wallet.ui.theme.components.IvyIcon
@@ -118,6 +121,7 @@ fun BoxWithConstraintsScope.SettingsScreen() {
         driveRecentConnected = uiState.driveRecentConnected,
         driveSetupStep = uiState.driveSetupStep,
         rivyUi = uiState.rivyUi,
+        driveState = uiState.driveState,
         onRivyUiEvent = viewModel::onEvent,
         onAddRecentDriveFile = {
             viewModel.onEvent(SettingsEvent.AddRecentDriveFile)
@@ -207,6 +211,7 @@ private fun BoxWithConstraintsScope.UI(
     onPickDriveFile: (Int) -> Unit = {},
     onCloseDriveSetup: () -> Unit = {},
     rivyUi: RivyUiState? = null,
+    driveState: DriveExportState? = null,
     onRivyUiEvent: (SettingsEvent) -> Unit = {},
     onSetDriveShowStatus: (Boolean) -> Unit = {},
     onConnectDriveExport: () -> Unit = {},
@@ -317,6 +322,12 @@ private fun BoxWithConstraintsScope.UI(
             )
 
             Spacer(Modifier.height(12.dp))
+
+            if (driveState != null) {
+                DriveBackup(state = driveState, onEvent = onRivyUiEvent)
+
+                Spacer(Modifier.height(12.dp))
+            }
 
             SettingsDefaultButton(
                 icon = R.drawable.ic_vue_security_shield,
@@ -611,6 +622,45 @@ private fun BoxWithConstraintsScope.UI(
 private enum class AppearanceModal { NONE, NAV_STYLE, TAB_ORDER, PALETTE }
 
 @Composable
+private fun DriveBackup(
+    state: DriveExportState,
+    onEvent: (SettingsEvent) -> Unit,
+) {
+    val last = state.backupLastSuccess?.let {
+        DateTimeFormatter.ofPattern("d MMM yyyy, HH.mm").format(it.atZone(ZoneId.systemDefault()))
+    }
+    val description = when {
+        !state.backupConnected -> stringResource(R.string.drive_backup_not_connected)
+        state.backupLastError != null && !state.running ->
+            stringResource(R.string.drive_export_failed, state.backupLastError.orEmpty())
+        last != null -> stringResource(R.string.drive_backup_success, last)
+        else -> stringResource(R.string.drive_export_pending)
+    }
+    SettingsDefaultButton(
+        icon = R.drawable.ic_vue_security_shield,
+        text = stringResource(R.string.drive_backup),
+        iconPadding = 8.dp,
+        description = description,
+    ) {
+        onEvent(
+            if (state.backupConnected) SettingsEvent.RunDriveExport else SettingsEvent.ConnectDriveBackup
+        )
+    }
+
+    if (state.backupConnected) {
+        Spacer(Modifier.height(12.dp))
+
+        SettingsDefaultButton(
+            icon = R.drawable.ic_delete,
+            text = stringResource(R.string.drive_backup_disconnect),
+            iconPadding = 6.dp,
+        ) {
+            onEvent(SettingsEvent.DisconnectDriveBackup)
+        }
+    }
+}
+
+@Composable
 private fun RivyAppearance(
     state: RivyUiState,
     onOpen: (AppearanceModal) -> Unit,
@@ -845,20 +895,25 @@ private fun BoxWithConstraintsScope.DriveSetupModal(
     onPick: (Int) -> Unit,
     onClose: () -> Unit,
 ) {
-    val first = step != 2
+    val shownStep = if (step == 0) 1 else step
+    val (label, title, body) = when (shownStep) {
+        2 -> Triple(R.string.drive_setup_step2, R.string.drive_setup_title2, R.string.drive_setup_body2)
+        3 -> Triple(R.string.drive_backup_label, R.string.drive_backup_title, R.string.drive_backup_body)
+        else -> Triple(R.string.drive_setup_step1, R.string.drive_setup_title1, R.string.drive_setup_body1)
+    }
     IvyModal(
         id = null,
         visible = step != 0,
         dismiss = onClose,
         SecondaryActions = {
             ModalSkip(
-                text = stringResource(if (first) R.string.drive_setup_cancel else R.string.skip),
+                text = stringResource(if (shownStep == 2) R.string.skip else R.string.drive_setup_cancel),
                 onClick = onClose,
             )
         },
         PrimaryAction = {
             ModalSet(label = stringResource(R.string.drive_setup_pick)) {
-                onPick(if (first) 1 else 2)
+                onPick(shownStep)
             }
         },
     ) {
@@ -866,21 +921,19 @@ private fun BoxWithConstraintsScope.DriveSetupModal(
 
         Text(
             modifier = Modifier.padding(horizontal = 32.dp),
-            text = stringResource(if (first) R.string.drive_setup_step1 else R.string.drive_setup_step2),
+            text = stringResource(label),
             style = UI.typo.c.style(color = UI.colors.primary, fontWeight = FontWeight.ExtraBold),
         )
 
         Spacer(Modifier.height(8.dp))
 
-        ModalTitle(
-            text = stringResource(if (first) R.string.drive_setup_title1 else R.string.drive_setup_title2)
-        )
+        ModalTitle(text = stringResource(title))
 
         Spacer(Modifier.height(16.dp))
 
         Text(
             modifier = Modifier.padding(horizontal = 32.dp),
-            text = stringResource(if (first) R.string.drive_setup_body1 else R.string.drive_setup_body2),
+            text = stringResource(body),
             style = UI.typo.b2.style(color = UI.colors.pureInverse, fontWeight = FontWeight.Medium),
         )
 

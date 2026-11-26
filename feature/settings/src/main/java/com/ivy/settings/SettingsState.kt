@@ -1,6 +1,7 @@
 package com.ivy.settings
 
 import com.ivy.base.legacy.Theme
+import com.ivy.legacy.driveexport.DriveExportState
 import com.ivy.legacy.rivyui.RivyUiState
 
 data class SettingsState(
@@ -20,6 +21,7 @@ data class SettingsState(
     val driveRecentConnected: Boolean,
     val driveSetupStep: Int,
     val rivyUi: RivyUiState,
+    val driveState: DriveExportState,
 )
 
 sealed interface DriveExportStatus {

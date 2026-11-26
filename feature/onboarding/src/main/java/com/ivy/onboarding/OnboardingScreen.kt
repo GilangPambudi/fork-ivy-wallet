@@ -70,7 +70,8 @@ private fun BoxWithConstraintsScope.UI(
         OnboardingState.SPLASH, OnboardingState.LOGIN -> {
             OnboardingSplashLogin(
                 onboardingState = onboardingState,
-                onSkip = { onEvent(OnboardingEvent.LoginOfflineAccount) }
+                onSkip = { onEvent(OnboardingEvent.LoginOfflineAccount) },
+                onRestoreFromDrive = { onEvent(OnboardingEvent.RestoreFromDrive) },
             )
         }
 
