@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
@@ -216,8 +218,8 @@ fun BoxWithConstraintsScope.BottomBar(
             (PILL_MARGIN * 2 + PILL_HEIGHT + FAB_BUTTON_SIZE).toDensityPx()
     }
 
-    val showFab = tab != MainTab.REPORTS && tab != MainTab.SETTINGS
-    if (showFab) TransactionButtons(
+    val fabEnabled = tab != MainTab.REPORTS && tab != MainTab.SETTINGS
+    if (fabEnabled) TransactionButtons(
         buttonsShownPercent = buttonsShownPercent,
 
         fabStartX = fabStartX,
@@ -233,7 +235,7 @@ fun BoxWithConstraintsScope.BottomBar(
         mutableStateOf(Offset.Zero)
     }
     // + & x button
-    if (showFab) IvyCircleButton(
+    IvyCircleButton(
         modifier = Modifier
             .layout { measurable, constraints ->
                 val placeable = measurable.measure(constraints)
@@ -247,7 +249,7 @@ fun BoxWithConstraintsScope.BottomBar(
             .size(FAB_BUTTON_SIZE)
             .rotate(fabRotation)
             .zIndex(200f)
-            .thenIf(tab != MainTab.ACCOUNTS) {
+            .thenIf(fabEnabled && tab != MainTab.ACCOUNTS) {
                 pointerInput(Unit) {
                     detectDragGestures(
                         onDragCancel = {
@@ -296,6 +298,7 @@ fun BoxWithConstraintsScope.BottomBar(
             else -> if (!expanded) GradientIvy else Gradient.solid(UI.colors.gray)
         },
         hasShadow = !expanded,
+        enabled = fabEnabled,
         tint = White
     ) {
         when (tab) {
@@ -364,7 +367,7 @@ private fun PillTab(
     val tint = if (selected) UI.colors.primary else UI.colors.gray
     Column(
         modifier = Modifier
-            .clip(CircleShape)
+            .clip(if (wideIndicator) CircleShape else RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
             .thenIf(wideIndicator && selected) { background(indicator) }
             .padding(
@@ -392,7 +395,11 @@ private fun PillTab(
         }
         Text(
             text = stringResource(label),
-            style = UI.typo.c.copy(fontSize = 12.sp).style(
+            style = UI.typo.c.copy(
+                fontSize = 12.sp,
+                lineHeight = 14.sp,
+                lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.Both),
+            ).style(
                 fontWeight = FontWeight.Bold,
                 color = when {
                     selected && wideIndicator -> UI.colors.primary
