@@ -95,13 +95,15 @@ class IvyWalletCtx @Inject constructor() : IvyContext() {
         mainTab = tab
     }
 
+    private var moreMenuExpandedState by mutableStateOf(false)
+
     @Deprecated("Legacy code. Don't use it, please.")
-    var moreMenuExpanded by mutableStateOf(false)
-        private set
+    val moreMenuExpanded: Boolean
+        get() = moreMenuExpandedState
 
     @Deprecated("Legacy code. Don't use it, please.")
     fun setMoreMenuExpanded(expanded: Boolean) {
-        moreMenuExpanded = expanded
+        moreMenuExpandedState = expanded
     }
     // ------------------------------------------ State ---------------------------------------------
 
