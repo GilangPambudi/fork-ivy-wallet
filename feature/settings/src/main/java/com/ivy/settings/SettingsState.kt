@@ -16,6 +16,8 @@ data class SettingsState(
     val languageOptionVisible: Boolean,
     val driveExport: DriveExportStatus,
     val driveShowStatus: Boolean,
+    val driveRecentConnected: Boolean,
+    val driveSetupStep: Int,
 )
 
 sealed interface DriveExportStatus {

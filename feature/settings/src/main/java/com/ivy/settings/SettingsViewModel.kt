@@ -76,6 +76,7 @@ class SettingsViewModel @Inject constructor(
     private val startDateOfMonth = mutableIntStateOf(1)
     private val progressState = mutableStateOf(false)
     private val driveExportStatus = mutableStateOf<DriveExportStatus>(DriveExportStatus.NotConnected)
+    private val driveSetupStep = mutableIntStateOf(0)
 
     @Composable
     override fun uiState(): SettingsState {
@@ -97,6 +98,8 @@ class SettingsViewModel @Inject constructor(
             languageOptionVisible = isLanguageOptionVisible(),
             driveExport = driveExportStatus.value,
             driveShowStatus = driveExport.state.collectAsState().value.showStatus,
+            driveRecentConnected = driveExport.state.collectAsState().value.recentConnected,
+            driveSetupStep = driveSetupStep.intValue,
         )
     }
 
@@ -127,22 +130,27 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun connectDriveExport() {
-        ivyContext.createNewFile("rivy.csv") { fileUri ->
-            val connected = runCatching { driveExport.connect(fileUri) }
-                .onFailure {
-                    driveExport.disconnect()
-                    driveExportStatus.value =
-                        DriveExportStatus.Failed(it.message ?: it.javaClass.simpleName)
-                }
-                .isSuccess
-            if (connected) {
-                viewModelScope.launch(Dispatchers.IO) { runDriveExportNow() }
-                ivyContext.createNewFile("rivy-terbaru.csv") { recentUri ->
-                    viewModelScope.launch(Dispatchers.IO) {
-                        runCatching { driveExport.connectRecent(recentUri) }
-                        runDriveExportNow()
+    private fun pickDriveFile(step: Int) {
+        driveSetupStep.intValue = 0
+        if (step == 1) {
+            ivyContext.createNewFile(DRIVE_FILE) { fileUri ->
+                val connected = runCatching { driveExport.connect(fileUri) }
+                    .onFailure {
+                        driveExport.disconnect()
+                        driveExportStatus.value =
+                            DriveExportStatus.Failed(it.message ?: it.javaClass.simpleName)
                     }
+                    .isSuccess
+                if (connected) {
+                    viewModelScope.launch(Dispatchers.IO) { runDriveExportNow() }
+                    driveSetupStep.intValue = 2
+                }
+            }
+        } else {
+            ivyContext.createNewFile(DRIVE_RECENT_FILE) { recentUri ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    runCatching { driveExport.connectRecent(recentUri) }
+                    runDriveExportNow()
                 }
             }
         }
@@ -289,7 +297,10 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.DeleteCloudUserData -> deleteCloudUserData()
             SettingsEvent.DeleteAllUserData -> deleteAllUserData()
             SettingsEvent.SwitchLanguage -> switchLanguage()
-            SettingsEvent.ConnectDriveExport -> connectDriveExport()
+            SettingsEvent.ConnectDriveExport -> driveSetupStep.intValue = 1
+            SettingsEvent.AddRecentDriveFile -> driveSetupStep.intValue = 2
+            is SettingsEvent.PickDriveFile -> pickDriveFile(event.step)
+            SettingsEvent.CloseDriveSetup -> driveSetupStep.intValue = 0
             SettingsEvent.RunDriveExport -> viewModelScope.launch(Dispatchers.IO) {
                 runDriveExportNow()
             }
@@ -468,3 +479,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 }
+
+private const val DRIVE_FILE = "rivy.csv"
+private const val DRIVE_RECENT_FILE = "rivy-terbaru.csv"

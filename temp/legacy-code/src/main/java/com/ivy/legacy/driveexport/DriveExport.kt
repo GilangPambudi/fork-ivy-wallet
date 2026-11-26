@@ -42,6 +42,7 @@ data class DriveExportState(
     val lastSuccess: Instant?,
     val lastError: String?,
     val showStatus: Boolean = true,
+    val recentConnected: Boolean = false,
 )
 
 @Singleton
@@ -79,6 +80,7 @@ class DriveExport @Inject constructor(
         lastSuccess = lastSuccess(),
         lastError = lastError(),
         showStatus = sharedPrefs.getBoolean(KEY_SHOW_STATUS, true),
+        recentConnected = recentFileUri() != null,
     )
 
     fun setShowStatus(show: Boolean) {
@@ -109,6 +111,7 @@ class DriveExport @Inject constructor(
     fun connectRecent(uri: Uri) {
         takePermission(uri)
         sharedPrefs.putString(KEY_URI_RECENT, uri.toString())
+        _state.value = readState(running = false)
     }
 
     private fun takePermission(uri: Uri) {

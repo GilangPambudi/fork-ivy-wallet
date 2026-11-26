@@ -69,6 +69,10 @@ import com.ivy.wallet.ui.theme.components.IvyToolbar
 import com.ivy.wallet.ui.theme.modal.ChooseStartDateOfMonthModal
 import com.ivy.wallet.ui.theme.modal.CurrencyModal
 import com.ivy.wallet.ui.theme.modal.DeleteModal
+import com.ivy.wallet.ui.theme.modal.IvyModal
+import com.ivy.wallet.ui.theme.modal.ModalSet
+import com.ivy.wallet.ui.theme.modal.ModalSkip
+import com.ivy.wallet.ui.theme.modal.ModalTitle
 import com.ivy.wallet.ui.theme.modal.NameModal
 import com.ivy.wallet.ui.theme.modal.ProgressModal
 import java.util.Locale
@@ -97,6 +101,17 @@ fun BoxWithConstraintsScope.SettingsScreen() {
         languageOptionVisible = uiState.languageOptionVisible,
         driveExport = uiState.driveExport,
         driveShowStatus = uiState.driveShowStatus,
+        driveRecentConnected = uiState.driveRecentConnected,
+        driveSetupStep = uiState.driveSetupStep,
+        onAddRecentDriveFile = {
+            viewModel.onEvent(SettingsEvent.AddRecentDriveFile)
+        },
+        onPickDriveFile = {
+            viewModel.onEvent(SettingsEvent.PickDriveFile(it))
+        },
+        onCloseDriveSetup = {
+            viewModel.onEvent(SettingsEvent.CloseDriveSetup)
+        },
         onSetDriveShowStatus = {
             viewModel.onEvent(SettingsEvent.SetDriveShowStatus(it))
         },
@@ -170,6 +185,11 @@ private fun BoxWithConstraintsScope.UI(
     treatTransfersAsIncomeExpense: Boolean = false,
     driveExport: DriveExportStatus = DriveExportStatus.NotConnected,
     driveShowStatus: Boolean = true,
+    driveRecentConnected: Boolean = false,
+    driveSetupStep: Int = 0,
+    onAddRecentDriveFile: () -> Unit = {},
+    onPickDriveFile: (Int) -> Unit = {},
+    onCloseDriveSetup: () -> Unit = {},
     onSetDriveShowStatus: (Boolean) -> Unit = {},
     onConnectDriveExport: () -> Unit = {},
     onRunDriveExport: () -> Unit = {},
@@ -269,6 +289,8 @@ private fun BoxWithConstraintsScope.UI(
             DriveExport(
                 status = driveExport,
                 showStatus = driveShowStatus,
+                recentConnected = driveRecentConnected,
+                onAddRecent = onAddRecentDriveFile,
                 onSetShowStatus = onSetDriveShowStatus,
                 onConnect = onConnectDriveExport,
                 onRun = onRunDriveExport,
@@ -579,6 +601,61 @@ private fun BoxWithConstraintsScope.UI(
         description = stringResource(R.string.exporting_data_description),
         visible = progressState
     )
+
+    DriveSetupModal(
+        step = driveSetupStep,
+        onPick = onPickDriveFile,
+        onClose = onCloseDriveSetup,
+    )
+}
+
+@Composable
+private fun BoxWithConstraintsScope.DriveSetupModal(
+    step: Int,
+    onPick: (Int) -> Unit,
+    onClose: () -> Unit,
+) {
+    val first = step != 2
+    IvyModal(
+        id = null,
+        visible = step != 0,
+        dismiss = onClose,
+        SecondaryActions = {
+            ModalSkip(
+                text = stringResource(if (first) R.string.drive_setup_cancel else R.string.skip),
+                onClick = onClose,
+            )
+        },
+        PrimaryAction = {
+            ModalSet(label = stringResource(R.string.drive_setup_pick)) {
+                onPick(if (first) 1 else 2)
+            }
+        },
+    ) {
+        Spacer(Modifier.height(32.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 32.dp),
+            text = stringResource(if (first) R.string.drive_setup_step1 else R.string.drive_setup_step2),
+            style = UI.typo.c.style(color = UI.colors.primary, fontWeight = FontWeight.ExtraBold),
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        ModalTitle(
+            text = stringResource(if (first) R.string.drive_setup_title1 else R.string.drive_setup_title2)
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 32.dp),
+            text = stringResource(if (first) R.string.drive_setup_body1 else R.string.drive_setup_body2),
+            style = UI.typo.b2.style(color = UI.colors.pureInverse, fontWeight = FontWeight.Medium),
+        )
+
+        Spacer(Modifier.height(32.dp))
+    }
 }
 
 @Composable
@@ -887,15 +964,18 @@ private fun AccountCardLocalAccount(
 private fun DriveExport(
     status: DriveExportStatus,
     showStatus: Boolean,
+    recentConnected: Boolean,
+    onAddRecent: () -> Unit,
     onSetShowStatus: (Boolean) -> Unit,
     onConnect: () -> Unit,
     onRun: () -> Unit,
     onDisconnect: () -> Unit,
 ) {
+    val files = if (recentConnected) "rivy.csv, rivy-terbaru.csv" else "rivy.csv"
     val description = when (status) {
         DriveExportStatus.NotConnected -> stringResource(R.string.drive_export_not_connected)
         DriveExportStatus.Pending -> stringResource(R.string.drive_export_pending)
-        is DriveExportStatus.Success -> stringResource(R.string.drive_export_success, status.at)
+        is DriveExportStatus.Success -> stringResource(R.string.drive_export_success_files, files, status.at)
         is DriveExportStatus.Failed -> stringResource(R.string.drive_export_failed, status.reason)
     }
     SettingsDefaultButton(
@@ -908,6 +988,18 @@ private fun DriveExport(
     }
 
     if (status != DriveExportStatus.NotConnected) {
+        if (!recentConnected) {
+            Spacer(Modifier.height(12.dp))
+
+            SettingsDefaultButton(
+                icon = R.drawable.ic_export_csv,
+                text = stringResource(R.string.drive_setup_add_recent),
+                iconPadding = 6.dp,
+            ) {
+                onAddRecent()
+            }
+        }
+
         Spacer(Modifier.height(12.dp))
 
         AppSwitch(
