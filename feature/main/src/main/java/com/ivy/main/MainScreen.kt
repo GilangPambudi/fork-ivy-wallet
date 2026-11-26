@@ -188,6 +188,7 @@ private fun BoxWithConstraintsScope.UI(
         style = rivyUi.navStyle,
         tabs = tabs,
         hideProgress = hideProgress,
+        pagePosition = pagerState.currentPage + pagerState.currentPageOffsetFraction,
     )
 
     AccountModal(

@@ -12,7 +12,18 @@ import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.lerp
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import kotlin.math.ceil
+import kotlin.math.floor
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.IntOffset
@@ -102,6 +113,7 @@ fun BoxWithConstraintsScope.BottomBar(
     style: NavStyle = NavStyle.CLASSIC,
     tabs: List<MainTab> = RivyUiState.CLASSIC_TABS,
     hideProgress: Float = 0f,
+    pagePosition: Float = 0f,
 ) {
     val ivyContext = ivyWalletCtx()
 
@@ -184,6 +196,7 @@ fun BoxWithConstraintsScope.BottomBar(
             style = style,
             tabs = tabs,
             current = tab,
+            pagePosition = pagePosition,
             selectTab = selectTab,
         )
     }
@@ -316,10 +329,19 @@ private fun PillBar(
     style: NavStyle,
     tabs: List<MainTab>,
     current: MainTab,
+    pagePosition: Float,
     selectTab: (MainTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    val wideIndicator = style == NavStyle.PILL_LABEL
+    val slots = remember(tabs, style) { mutableStateMapOf<Int, Rect>() }
+    var origin by remember { mutableStateOf(Offset.Zero) }
+    val position = if (tabs.contains(current)) {
+        pagePosition.coerceIn(0f, (tabs.size - 1).toFloat())
+    } else {
+        0f
+    }
+    Box(
         modifier = modifier
             .navigationBarsPadding()
             .padding(PILL_MARGIN)
@@ -331,20 +353,47 @@ private fun PillBar(
             .clickableNoIndication(rememberInteractionSource()) {
                 // consume click
             }
-            .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
+            .onGloballyPositioned { origin = it.positionInRoot() },
     ) {
-        tabs.forEachIndexed { index, tab ->
-            if (style == NavStyle.PILL_CENTER && index == tabs.size / 2) {
-                Spacer(Modifier.width(FAB_BUTTON_SIZE))
-            }
-            PillTab(
-                tab = tab,
-                selected = tab == current,
-                wideIndicator = style == NavStyle.PILL_LABEL,
-            ) {
-                selectTab(tab)
+        val from = slots[floor(position).toInt()]
+        val to = slots[ceil(position).toInt()]
+        if (from != null && to != null) {
+            val rect = lerp(from, to, position - floor(position))
+            Box(
+                modifier = Modifier
+                    .offset {
+                        IntOffset(
+                            (rect.left - origin.x).roundToInt(),
+                            (rect.top - origin.y).roundToInt(),
+                        )
+                    }
+                    .size(
+                        width = rect.width.toDensityDp(),
+                        height = rect.height.toDensityDp(),
+                    )
+                    .clip(CircleShape)
+                    .background(UI.colors.primary.copy(alpha = 0.18f))
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            tabs.forEachIndexed { index, tab ->
+                if (style == NavStyle.PILL_CENTER && index == tabs.size / 2) {
+                    Spacer(Modifier.width(FAB_BUTTON_SIZE))
+                }
+                PillTab(
+                    tab = tab,
+                    selected = index == position.roundToInt(),
+                    wideIndicator = wideIndicator,
+                    onIndicatorPlaced = { slots[index] = it },
+                ) {
+                    selectTab(tab)
+                }
             }
         }
     }
@@ -355,6 +404,7 @@ private fun PillTab(
     tab: MainTab,
     selected: Boolean,
     wideIndicator: Boolean,
+    onIndicatorPlaced: (Rect) -> Unit,
     onClick: () -> Unit,
 ) {
     val (icon, label, iconSize) = when (tab) {
@@ -363,16 +413,23 @@ private fun PillTab(
         MainTab.REPORTS -> Triple(R.drawable.ic_statistics_s, R.string.reports, 38.dp)
         MainTab.SETTINGS -> Triple(R.drawable.ic_settings, R.string.settings, 31.dp)
     }
-    val indicator = UI.colors.primary.copy(alpha = 0.18f)
     val tint = if (selected) UI.colors.primary else UI.colors.gray
+    val interaction = remember { MutableInteractionSource() }
+    val ripple = rememberRipple()
     Column(
         modifier = Modifier
-            .clip(if (wideIndicator) CircleShape else RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
-            .thenIf(wideIndicator && selected) { background(indicator) }
+            .thenIf(wideIndicator) {
+                widthIn(min = 84.dp)
+                    .onGloballyPositioned { onIndicatorPlaced(it.boundsInRoot()) }
+                    .clip(CircleShape)
+                    .indication(interaction, ripple)
+            }
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
             .padding(
-                horizontal = if (wideIndicator) 16.dp else 2.dp,
-                vertical = if (wideIndicator) 8.dp else 6.dp,
+                start = if (wideIndicator) 12.dp else 2.dp,
+                end = if (wideIndicator) 12.dp else 2.dp,
+                top = if (wideIndicator) 10.5.dp else 6.dp,
+                bottom = if (wideIndicator) 5.5.dp else 6.dp,
             )
             .testTag("pill_tab_${tab.name.lowercase()}"),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -384,7 +441,11 @@ private fun PillTab(
                     width = if (wideIndicator) 24.dp else 64.dp,
                     height = if (wideIndicator) 24.dp else 32.dp,
                 )
-                .thenIf(!wideIndicator && selected) { clip(CircleShape).background(indicator) },
+                .thenIf(!wideIndicator) {
+                    onGloballyPositioned { onIndicatorPlaced(it.boundsInRoot()) }
+                        .clip(CircleShape)
+                        .indication(interaction, ripple)
+                },
             contentAlignment = Alignment.Center,
         ) {
             IvyIcon(
