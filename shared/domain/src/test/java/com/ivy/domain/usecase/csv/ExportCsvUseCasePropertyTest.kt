@@ -7,6 +7,8 @@ import com.ivy.data.file.FileSystem
 import com.ivy.data.model.Transaction
 import com.ivy.data.model.getFromAccount
 import com.ivy.data.model.getToAccount
+import com.ivy.data.model.primitive.AssetCode
+import com.ivy.data.model.primitive.NotBlankTrimmedString
 import com.ivy.data.model.testing.account
 import com.ivy.data.model.testing.category
 import com.ivy.data.model.testing.transaction
@@ -24,6 +26,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import java.time.Instant
 
 class ExportCsvUseCasePropertyTest {
 
@@ -85,5 +88,27 @@ class ExportCsvUseCasePropertyTest {
                 hasExpectedNumOfColumns shouldBe true
             }
         }
+    }
+
+    @Test
+    fun `balance rows come first with plain numbers`() = runTest {
+        val account = Arb.account().next().copy(
+            name = NotBlankTrimmedString.unsafe("BCA, utama"),
+            asset = AssetCode.unsafe("IDR"),
+        )
+        coEvery { accountRepository.findAll() } returns listOf(account)
+
+        val csv = useCase.exportCsv(
+            plainNumbers = true,
+            balances = listOf(account to 1234567.5, account to -2500.0),
+            balancesTime = Instant.parse("2026-11-26T03:32:00Z"),
+        ) { emptyList() }
+
+        val rows = ReadCsvUseCase().readCsv(csv)
+        rows.size shouldBe 3
+        rows[1] shouldBe listOf(
+            "2026-11-26T03:32:00", "Saldo", "", "BCA, utama", "1234567.50", "IDR", "BALANCE"
+        ) + List(IvyCsvRow.Columns.size - 7) { "" }
+        rows[2][4] shouldBe "-2500.00"
     }
 }

@@ -13,5 +13,13 @@ data class SettingsState(
     val treatTransfersAsIncomeExpense: Boolean,
     val startDateOfMonth: String,
     val progressState: Boolean,
-    val languageOptionVisible: Boolean
+    val languageOptionVisible: Boolean,
+    val driveExport: DriveExportStatus,
 )
+
+sealed interface DriveExportStatus {
+    data object NotConnected : DriveExportStatus
+    data object Pending : DriveExportStatus
+    data class Success(val at: String) : DriveExportStatus
+    data class Failed(val reason: String) : DriveExportStatus
+}

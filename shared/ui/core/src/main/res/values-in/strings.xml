@@ -276,6 +276,12 @@
     <string name="sync_failed">Sinkronisasi gagal. Ketuk untuk menyinkronkan</string>
     <string name="anonymous">Anonim</string>
     <string name="export_to_csv">Ekspor ke CSV</string>
+    <string name="drive_export">Ekspor otomatis ke Drive</string>
+    <string name="drive_export_not_connected">Pilih file CSV di Google Drive. Rivy akan memperbaruinya setiap ada perubahan.</string>
+    <string name="drive_export_pending">Menunggu ekspor pertama</string>
+    <string name="drive_export_success">Terakhir diperbarui: %1$s. Ketuk untuk perbarui sekarang.</string>
+    <string name="drive_export_failed">Gagal: %1$s. Ketuk untuk coba lagi.</string>
+    <string name="drive_export_disconnect">Hentikan ekspor otomatis</string>
     <string name="left_to_spend">Sisa yang dapat dihabiskan</string>
     <string name="budget_exceeded_by">Anggaran melebihi oleh</string>
     <string name="buffer_exceeded_by">Buffer melebihi oleh</string>

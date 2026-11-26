@@ -17,12 +17,17 @@ class FileSystem @Inject constructor(
     @ApplicationContext
     private val appContext: Context
 ) {
-    fun writeToFile(uri: Uri, content: String): Either<Failure, Unit> = try {
+    fun writeToFile(
+        uri: Uri,
+        content: String,
+        charset: Charset = Charsets.UTF_16,
+        mode: String = "w",
+    ): Either<Failure, Unit> = try {
         val contentResolver = appContext.contentResolver
 
-        contentResolver.openFileDescriptor(uri, "w")?.use {
+        contentResolver.openFileDescriptor(uri, mode)?.use {
             FileOutputStream(it.fileDescriptor).use { fOut ->
-                val writer = fOut.writer(charset = Charsets.UTF_16)
+                val writer = fOut.writer(charset = charset)
                 writer.write(content)
                 writer.close()
             }

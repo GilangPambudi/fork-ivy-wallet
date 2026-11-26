@@ -95,6 +95,16 @@ fun BoxWithConstraintsScope.SettingsScreen() {
         nameLocalAccount = uiState.name,
         startDateOfMonth = uiState.startDateOfMonth.toInt(),
         languageOptionVisible = uiState.languageOptionVisible,
+        driveExport = uiState.driveExport,
+        onConnectDriveExport = {
+            viewModel.onEvent(SettingsEvent.ConnectDriveExport)
+        },
+        onRunDriveExport = {
+            viewModel.onEvent(SettingsEvent.RunDriveExport)
+        },
+        onDisconnectDriveExport = {
+            viewModel.onEvent(SettingsEvent.DisconnectDriveExport)
+        },
         onSetCurrency = {
             viewModel.onEvent(SettingsEvent.SetCurrency(it))
         },
@@ -154,6 +164,10 @@ private fun BoxWithConstraintsScope.UI(
     hideIncome: Boolean = false,
     progressState: Boolean = false,
     treatTransfersAsIncomeExpense: Boolean = false,
+    driveExport: DriveExportStatus = DriveExportStatus.NotConnected,
+    onConnectDriveExport: () -> Unit = {},
+    onRunDriveExport: () -> Unit = {},
+    onDisconnectDriveExport: () -> Unit = {},
     onSetName: (String) -> Unit = {},
     onBackupData: () -> Unit = {},
     onExportToCSV: () -> Unit = {},
@@ -243,6 +257,15 @@ private fun BoxWithConstraintsScope.UI(
             ExportCSV {
                 onExportToCSV()
             }
+
+            Spacer(Modifier.height(12.dp))
+
+            DriveExport(
+                status = driveExport,
+                onConnect = onConnectDriveExport,
+                onRun = onRunDriveExport,
+                onDisconnect = onDisconnectDriveExport,
+            )
 
             Spacer(Modifier.height(12.dp))
 
@@ -849,6 +872,41 @@ private fun AccountCardLocalAccount(
         )
 
         Spacer(Modifier.width(12.dp))
+    }
+}
+
+@Composable
+private fun DriveExport(
+    status: DriveExportStatus,
+    onConnect: () -> Unit,
+    onRun: () -> Unit,
+    onDisconnect: () -> Unit,
+) {
+    val description = when (status) {
+        DriveExportStatus.NotConnected -> stringResource(R.string.drive_export_not_connected)
+        DriveExportStatus.Pending -> stringResource(R.string.drive_export_pending)
+        is DriveExportStatus.Success -> stringResource(R.string.drive_export_success, status.at)
+        is DriveExportStatus.Failed -> stringResource(R.string.drive_export_failed, status.reason)
+    }
+    SettingsDefaultButton(
+        icon = R.drawable.ic_export_csv,
+        text = stringResource(R.string.drive_export),
+        iconPadding = 6.dp,
+        description = description,
+    ) {
+        if (status == DriveExportStatus.NotConnected) onConnect() else onRun()
+    }
+
+    if (status != DriveExportStatus.NotConnected) {
+        Spacer(Modifier.height(12.dp))
+
+        SettingsDefaultButton(
+            icon = R.drawable.ic_delete,
+            text = stringResource(R.string.drive_export_disconnect),
+            iconPadding = 6.dp,
+        ) {
+            onDisconnect()
+        }
     }
 }
 

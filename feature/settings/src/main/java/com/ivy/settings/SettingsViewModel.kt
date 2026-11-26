@@ -25,6 +25,7 @@ import com.ivy.domain.usecase.exchange.SyncExchangeRatesUseCase
 import com.ivy.frp.monad.Res
 import com.ivy.legacy.IvyWalletCtx
 import com.ivy.legacy.LogoutLogic
+import com.ivy.legacy.driveexport.DriveExport
 import com.ivy.legacy.domain.action.settings.UpdateSettingsAct
 import com.ivy.legacy.utils.getISOFormattedDateTime
 import com.ivy.legacy.utils.ioThread
@@ -39,6 +40,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @Stable
@@ -57,6 +60,7 @@ class SettingsViewModel @Inject constructor(
     private val updateSettingsAct: UpdateSettingsAct,
     private val settingsWriter: WriteSettingsDao,
     private val exportCsvUseCase: ExportCsvUseCase,
+    private val driveExport: DriveExport,
     @ApplicationContext private val context: Context
 ) : ComposeViewModel<SettingsState, SettingsEvent>() {
 
@@ -70,6 +74,7 @@ class SettingsViewModel @Inject constructor(
     private val treatTransfersAsIncomeExpense = mutableStateOf(false)
     private val startDateOfMonth = mutableIntStateOf(1)
     private val progressState = mutableStateOf(false)
+    private val driveExportStatus = mutableStateOf<DriveExportStatus>(DriveExportStatus.NotConnected)
 
     @Composable
     override fun uiState(): SettingsState {
@@ -88,7 +93,8 @@ class SettingsViewModel @Inject constructor(
             startDateOfMonth = getStartDateOfMonth(),
             progressState = getProgressState(),
             hideIncome = getHideIncome(),
-            languageOptionVisible = isLanguageOptionVisible()
+            languageOptionVisible = isLanguageOptionVisible(),
+            driveExport = driveExportStatus.value,
         )
     }
 
@@ -102,6 +108,47 @@ class SettingsViewModel @Inject constructor(
         initializeHideIncome()
         initializeTransfersAsIncomeExpense()
         initializeStartDateOfMonth()
+        refreshDriveExportStatus()
+    }
+
+    private fun refreshDriveExportStatus() {
+        val error = driveExport.lastError()
+        val lastSuccess = driveExport.lastSuccess()
+        driveExportStatus.value = when {
+            driveExport.fileUri() == null -> DriveExportStatus.NotConnected
+            error != null -> DriveExportStatus.Failed(error)
+            lastSuccess != null -> DriveExportStatus.Success(
+                DateTimeFormatter.ofPattern("d MMM yyyy, HH.mm")
+                    .format(lastSuccess.atZone(ZoneId.systemDefault()))
+            )
+            else -> DriveExportStatus.Pending
+        }
+    }
+
+    private fun connectDriveExport() {
+        ivyContext.createNewFile("rivy.csv") { fileUri ->
+            viewModelScope.launch(Dispatchers.IO) {
+                runCatching { driveExport.connect(fileUri) }
+                    .onFailure {
+                        driveExport.disconnect()
+                        driveExportStatus.value =
+                            DriveExportStatus.Failed(it.message ?: it.javaClass.simpleName)
+                    }
+                    .onSuccess { runDriveExportNow() }
+            }
+        }
+    }
+
+    private suspend fun runDriveExportNow() {
+        progressState.value = true
+        driveExport.export()
+        refreshDriveExportStatus()
+        progressState.value = false
+    }
+
+    private fun disconnectDriveExport() {
+        driveExport.disconnect()
+        refreshDriveExportStatus()
     }
 
     private suspend fun initializeCurrency() {
@@ -233,6 +280,11 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.DeleteCloudUserData -> deleteCloudUserData()
             SettingsEvent.DeleteAllUserData -> deleteAllUserData()
             SettingsEvent.SwitchLanguage -> switchLanguage()
+            SettingsEvent.ConnectDriveExport -> connectDriveExport()
+            SettingsEvent.RunDriveExport -> viewModelScope.launch(Dispatchers.IO) {
+                runDriveExportNow()
+            }
+            SettingsEvent.DisconnectDriveExport -> disconnectDriveExport()
         }
     }
 

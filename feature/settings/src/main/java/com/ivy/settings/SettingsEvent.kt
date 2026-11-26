@@ -19,4 +19,7 @@ sealed interface SettingsEvent {
     data object DeleteCloudUserData : SettingsEvent
     data object DeleteAllUserData : SettingsEvent
     data object SwitchLanguage : SettingsEvent
+    data object ConnectDriveExport : SettingsEvent
+    data object RunDriveExport : SettingsEvent
+    data object DisconnectDriveExport : SettingsEvent
 }

@@ -44,12 +44,15 @@ class ExportCsvUseCase @Inject constructor(
             transactionRepository.findAll()
         }
     ): Either<FileSystem.Failure, Unit> = withContext(dispatchers.io) {
-        val csv = exportCsv(exportScope)
+        val csv = exportCsv(exportScope = exportScope)
         fileSystem.writeToFile(outputFile, csv)
     }
 
     suspend fun exportCsv(
-        exportScope: suspend TransactionRepository.() -> List<Transaction>
+        plainNumbers: Boolean = false,
+        balances: List<Pair<Account, Double>> = emptyList(),
+        balancesTime: Instant? = null,
+        exportScope: suspend TransactionRepository.() -> List<Transaction>,
     ): String = withContext(dispatchers.io) {
         val transactions = transactionRepository.exportScope()
         val accountsMap = accountRepository.findAll().associateBy(Account::id)
@@ -58,11 +61,27 @@ class ExportCsvUseCase @Inject constructor(
         buildString {
             append(IvyCsvRow.Columns.joinToString(separator = CSV_SEPARATOR))
             append(NEWLINE)
+            for ((account, balance) in balances) {
+                append(
+                    csvRow {
+                        csvAppend(balancesTime?.csvFormat(timeConverter))
+                        csvAppend(BALANCE_TITLE)
+                        csvAppend(null)
+                        csvAppend(account.name.value)
+                        csvAppend(balance.csvFormat(plainNumbers))
+                        csvAppend(account.asset.code)
+                        csvAppend(BALANCE_TYPE)
+                        repeat(IvyCsvRow.Columns.size - 7) { csvAppend(null) }
+                    }
+                )
+                append(NEWLINE)
+            }
             for (trn in transactions) {
                 append(
                     trn.toIvyCsvRow().toCsvString(
                         accountsMap = accountsMap,
-                        categoriesMap = categoriesMap
+                        categoriesMap = categoriesMap,
+                        plainNumbers = plainNumbers,
                     )
                 )
                 append(NEWLINE)
@@ -73,6 +92,7 @@ class ExportCsvUseCase @Inject constructor(
     private fun IvyCsvRow.toCsvString(
         accountsMap: Map<AccountId, Account>,
         categoriesMap: Map<CategoryId, Category>,
+        plainNumbers: Boolean,
     ): String = csvRow {
         // Date
         csvAppend(date?.csvFormat(timeConverter))
@@ -83,19 +103,19 @@ class ExportCsvUseCase @Inject constructor(
         // Account
         csvAppend(accountsMap[account]?.name?.value)
         // Amount
-        csvAppend(amount.value.csvFormat())
+        csvAppend(amount.value.csvFormat(plainNumbers))
         // Currency
         csvAppend(currency.code)
         // Type
         csvAppend(type.name)
         // Transfer Amount
-        csvAppend(transferAmount?.value?.csvFormat())
+        csvAppend(transferAmount?.value?.csvFormat(plainNumbers))
         // Transfer Currency
         csvAppend(transferCurrency?.code)
         // To Account
         csvAppend(accountsMap[toAccountId]?.name?.value)
         // Receive Amount
-        csvAppend(receiveAmount?.value?.csvFormat())
+        csvAppend(receiveAmount?.value?.csvFormat(plainNumbers))
         // Receive Currency
         csvAppend(receiveCurrency?.code)
         // Description
@@ -194,9 +214,10 @@ class ExportCsvUseCase @Inject constructor(
         }.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     }
 
-    private fun Double.csvFormat(): String = DecimalFormat(NUMBER_FORMAT).apply {
-        decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
-    }.format(this)
+    private fun Double.csvFormat(plain: Boolean): String =
+        DecimalFormat(if (plain) PLAIN_NUMBER_FORMAT else NUMBER_FORMAT).apply {
+            decimalFormatSymbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        }.format(this)
 
     interface CsvRowScope {
         fun csvAppend(value: String?)
@@ -206,5 +227,8 @@ class ExportCsvUseCase @Inject constructor(
         private const val CSV_SEPARATOR = ","
         private const val NEWLINE = "\n"
         private const val NUMBER_FORMAT = "#,##0.00"
+        private const val PLAIN_NUMBER_FORMAT = "0.00"
+        private const val BALANCE_TITLE = "Saldo"
+        private const val BALANCE_TYPE = "BALANCE"
     }
 }

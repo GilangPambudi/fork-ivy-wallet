@@ -279,6 +279,12 @@
     <string name="sync_failed">Sync failed. Tap to retry</string>
     <string name="anonymous">Anonymous</string>
     <string name="export_to_csv">Export to CSV</string>
+    <string name="drive_export">Auto export to Drive</string>
+    <string name="drive_export_not_connected">Pick a CSV file in Google Drive. Rivy keeps it updated after every change.</string>
+    <string name="drive_export_pending">Waiting for the first export</string>
+    <string name="drive_export_success">Last updated: %1$s. Tap to update now.</string>
+    <string name="drive_export_failed">Failed: %1$s. Tap to try again.</string>
+    <string name="drive_export_disconnect">Stop auto export</string>
     <string name="left_to_spend">Left to spend</string>
     <string name="budget_exceeded_by">Budget exceeded by</string>
     <string name="buffer_exceeded_by">Buffer exceeded by</string>
