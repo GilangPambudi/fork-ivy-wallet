@@ -1,7 +1,11 @@
 package com.ivy.main
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.annotation.StringRes
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,11 +74,9 @@ import com.ivy.design.utils.thenIf
 import com.ivy.legacy.data.model.MainTab
 import com.ivy.legacy.ivyWalletCtx
 import com.ivy.legacy.utils.clickableNoIndication
-import com.ivy.legacy.utils.densityScope
 import com.ivy.legacy.utils.lerp
 import com.ivy.legacy.utils.navigationBarInset
 import com.ivy.legacy.utils.rememberInteractionSource
-import com.ivy.legacy.utils.springBounceFast
 import com.ivy.legacy.utils.toDensityDp
 import com.ivy.legacy.utils.toDensityPx
 import com.ivy.ui.R
@@ -129,20 +131,24 @@ fun BoxWithConstraintsScope.BottomBar(
         expanded = false
     }
 
-    val screenHeightDp = densityScope { ivyContext.screenHeight.toDp() }
-    val expandedBackgroundOffset by animateDpAsState(
-        targetValue = if (expanded) 0.dp else screenHeightDp,
-        animationSpec = springBounceFast()
+    // Tweens without bounce: a bouncing spring overshoots past the end,
+    // which left a strip at the bottom of the screen uncovered.
+    val overlayAlpha by animateFloatAsState(
+        targetValue = if (expanded) 1f else 0f,
+        animationSpec = tween(OVERLAY_ANIM_MS, easing = FastOutSlowInEasing),
+        label = "add_overlay",
     )
 
     val fabRotation by animateFloatAsState(
         targetValue = if (expanded) 45f else 0f,
-        animationSpec = springBounceFast()
+        animationSpec = tween(BUTTONS_ANIM_MS, easing = ButtonsEasing),
+        label = "add_fab_rotation",
     )
 
     val buttonsShownPercent by animateFloatAsState(
         targetValue = if (expanded) 1f else 0f,
-        animationSpec = springBounceFast()
+        animationSpec = tween(BUTTONS_ANIM_MS, easing = ButtonsEasing),
+        label = "add_buttons",
     )
 
     val overlayOpen = OpenModals.count > 0 || ivyContext.moreMenuExpanded
@@ -201,11 +207,11 @@ fun BoxWithConstraintsScope.BottomBar(
         )
     }
 
-    if (expandedBackgroundOffset < screenHeightDp) {
+    if (overlayAlpha > 0f) {
         Spacer(
             modifier = Modifier
                 .fillMaxSize()
-                .offset(y = expandedBackgroundOffset)
+                .graphicsLayer { alpha = overlayAlpha }
                 .background(UI.colors.pure.copy(alpha = 0.95f))
                 .clickableNoIndication(rememberInteractionSource()) {
                     // consume click, do nothing
@@ -232,11 +238,22 @@ fun BoxWithConstraintsScope.BottomBar(
     }
 
     val fabEnabled = tab != MainTab.REPORTS && tab != MainTab.SETTINGS
-    if (fabEnabled) TransactionButtons(
+    val speedDial = style == NavStyle.PILL_FLOAT || style == NavStyle.PILL_LABEL
+    if (fabEnabled && speedDial) SpeedDialButtons(
+        buttonsShownPercent = buttonsShownPercent,
+        fabX = fabX,
+        fabY = fabY,
+        onAddIncome = onAddIncome,
+        onAddExpense = onAddExpense,
+        onAddTransfer = onAddTransfer,
+        onAddPlannedPayment = onAddPlannedPayment
+    )
+    if (fabEnabled && !speedDial) TransactionButtons(
         buttonsShownPercent = buttonsShownPercent,
 
         fabStartX = fabX,
         fabStartY = fabY,
+        centerX = fabStartX,
 
         onAddIncome = onAddIncome,
         onAddExpense = onAddExpense,
@@ -285,14 +302,16 @@ fun BoxWithConstraintsScope.BottomBar(
                                     onAddExpense()
                                 }
 
-                                dragOffset.x < -horizontalThreshold &&
+                                !speedDial &&
+                                        dragOffset.x < -horizontalThreshold &&
                                         dragOffset.y < -verticalThreshold -> {
                                     // swipe up left
                                     dragOffset = Offset.Zero // prevent double open of the screen
                                     onAddIncome()
                                 }
 
-                                dragOffset.x > horizontalThreshold &&
+                                !speedDial &&
+                                        dragOffset.x > horizontalThreshold &&
                                         dragOffset.y < -verticalThreshold -> {
                                     // swipe up right
                                     dragOffset = Offset.Zero // prevent double open of the screen
@@ -479,6 +498,7 @@ private fun TransactionButtons(
 
     fabStartX: Float,
     fabStartY: Float,
+    centerX: Float,
 
     onAddIncome: () -> Unit,
     onAddExpense: () -> Unit,
@@ -538,6 +558,7 @@ private fun TransactionButtons(
             buttonsShownPercent = buttonsShownPercent,
             fabStartX = fabStartX,
             fabStartY = fabStartY,
+            buttonCenterX = centerX,
             buttonCenterY = buttonCenterY,
             clickAreaWidth = clickAreaWidth,
             onAddExpense = onAddExpense
@@ -649,6 +670,7 @@ private fun AddExpenseButton(
     buttonsShownPercent: Float,
     fabStartX: Float,
     fabStartY: Float,
+    buttonCenterX: Float,
     buttonCenterY: Float,
     clickAreaWidth: Int,
     onAddExpense: () -> Unit,
@@ -667,7 +689,7 @@ private fun AddExpenseButton(
 
                 layout(placeable.width, placeable.height) {
                     placeable.place(
-                        x = fabStartX.roundToInt(),
+                        x = lerp(fabStartX, buttonCenterX, buttonsShownPercent).roundToInt(),
                         y = y.roundToInt()
                     )
                 }
@@ -688,7 +710,7 @@ private fun AddExpenseButton(
                 val placeable = measurable.measure(constraints)
                 layout(placeable.width, placeable.height) {
                     placeable.place(
-                        x = fabStartX.roundToInt() - 8.dp.roundToPx(),
+                        x = buttonCenterX.roundToInt() - 8.dp.roundToPx(),
                         y = (buttonCenterY + 12.dp.toPx()).roundToInt()
                     )
                 }
@@ -814,6 +836,136 @@ private fun AddTransferButton(
                 onAddTransfer()
             }
     )
+}
+
+private const val BUTTONS_ANIM_MS = 300
+private const val OVERLAY_ANIM_MS = 200
+private val ButtonsEasing = CubicBezierEasing(0.2f, 0.8f, 0.2f, 1f)
+private val SPEED_DIAL_BUTTON = 48.dp
+private val SPEED_DIAL_STEP = 64.dp
+
+/**
+ * Vertical speed dial above the + button, used when the + sits in the
+ * bottom right corner (pill styles). All items move together from the +
+ * to their place, bottom to top: expense, income, transfer, planned payment.
+ */
+@Composable
+private fun SpeedDialButtons(
+    buttonsShownPercent: Float,
+    fabX: Float,
+    fabY: Float,
+    onAddIncome: () -> Unit,
+    onAddExpense: () -> Unit,
+    onAddTransfer: () -> Unit,
+    onAddPlannedPayment: () -> Unit,
+) {
+    if (buttonsShownPercent <= 0.01f) return
+
+    SpeedDialItem(
+        index = 0,
+        label = R.string.add_expense,
+        icon = R.drawable.ic_expense,
+        gradient = gradientExpenses(),
+        horizontalGradient = false,
+        buttonsShownPercent = buttonsShownPercent,
+        fabX = fabX,
+        fabY = fabY,
+        onClick = onAddExpense,
+    )
+    SpeedDialItem(
+        index = 1,
+        label = R.string.add_income,
+        icon = R.drawable.ic_income,
+        gradient = GradientGreen,
+        buttonsShownPercent = buttonsShownPercent,
+        fabX = fabX,
+        fabY = fabY,
+        onClick = onAddIncome,
+    )
+    SpeedDialItem(
+        index = 2,
+        label = R.string.transfer,
+        icon = R.drawable.ic_transfer,
+        gradient = GradientIvy,
+        buttonsShownPercent = buttonsShownPercent,
+        fabX = fabX,
+        fabY = fabY,
+        onClick = onAddTransfer,
+    )
+    SpeedDialItem(
+        index = 3,
+        label = R.string.add_planned_payment,
+        icon = R.drawable.ic_planned_payments,
+        gradient = Gradient.solid(UI.colors.medium),
+        tint = UI.colors.pureInverse,
+        buttonsShownPercent = buttonsShownPercent,
+        fabX = fabX,
+        fabY = fabY,
+        onClick = onAddPlannedPayment,
+    )
+}
+
+@Suppress("LongParameterList")
+@Composable
+private fun SpeedDialItem(
+    index: Int,
+    @StringRes label: Int,
+    @DrawableRes icon: Int,
+    gradient: Gradient,
+    buttonsShownPercent: Float,
+    fabX: Float,
+    fabY: Float,
+    onClick: () -> Unit,
+    horizontalGradient: Boolean = true,
+    tint: Color = White,
+) {
+    Row(
+        modifier = Modifier
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(
+                    constraints.copy(minWidth = 0, minHeight = 0)
+                )
+                val fabPx = FAB_BUTTON_SIZE.toPx()
+                val fabCenterY = fabY + fabPx / 2f
+                val targetCenterY = fabCenterY - (index + 1) * SPEED_DIAL_STEP.toPx()
+                val centerY = lerp(fabCenterY, targetCenterY, buttonsShownPercent)
+                val right = fabX + fabPx / 2f + SPEED_DIAL_BUTTON.toPx() / 2f
+                layout(placeable.width, placeable.height) {
+                    placeable.place(
+                        x = (right - placeable.width).roundToInt(),
+                        y = (centerY - placeable.height / 2f).roundToInt(),
+                    )
+                }
+            }
+            .graphicsLayer { alpha = buttonsShownPercent }
+            .zIndex(200f)
+            .clickableNoIndication(rememberInteractionSource()) { onClick() }
+            .testTag("speed_dial_$index"),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(UI.colors.medium)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            text = stringResource(label),
+            style = UI.typo.c.style(
+                color = UI.colors.pureInverse,
+                fontWeight = FontWeight.Bold,
+            )
+        )
+        IvyCircleButton(
+            modifier = Modifier.size(SPEED_DIAL_BUTTON),
+            backgroundPadding = 6.dp,
+            icon = icon,
+            backgroundGradient = gradient,
+            horizontalGradient = horizontalGradient,
+            tint = tint,
+            hasShadow = false,
+            onClick = onClick,
+        )
+    }
 }
 
 @Composable
