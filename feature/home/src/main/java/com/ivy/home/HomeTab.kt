@@ -14,8 +14,13 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,7 +36,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.IntOffset
-import com.ivy.design.l0_system.UI
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.roundToInt
@@ -98,6 +102,7 @@ fun BoxWithConstraintsScope.HomeTab() {
 @Suppress("LongMethod")
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BoxWithConstraintsScope.HomeUi(
     uiState: HomeState,
@@ -120,9 +125,43 @@ fun BoxWithConstraintsScope.HomeUi(
 
     val baseCurrency = uiState.baseData.baseCurrency
 
+    val driveExport = uiState.driveExport
+    val currentDriveExport by rememberUpdatedState(driveExport)
+    val pullState = rememberPullToRefreshState(
+        positionalThreshold = PULL_THRESHOLD,
+        enabled = { currentDriveExport.connected && !currentDriveExport.running }
+    )
+    if (pullState.isRefreshing) {
+        LaunchedEffect(Unit) {
+            onEvent(HomeEvent.SyncDrive)
+            withTimeoutOrNull(SYNC_START_TIMEOUT_MS) {
+                snapshotFlow { currentDriveExport.running }.first { it }
+            }
+            snapshotFlow { currentDriveExport.running }.first { !it }
+            pullState.endRefresh()
+        }
+    }
+    val revealPage = driveExport.connected && !driveExport.showStatus
+    val pageOffset by animateFloatAsState(
+        targetValue = if (revealPage) pullState.verticalOffset else 0f,
+        animationSpec = spring(stiffness = Spring.StiffnessHigh),
+        label = "drive_pull_offset",
+    )
+
+    if (revealPage && pageOffset > 0f) {
+        DrivePullReveal(
+            modifier = Modifier.statusBarsPadding(),
+            state = driveExport,
+            progress = pullState.progress,
+            refreshing = pullState.isRefreshing,
+            heightPx = pageOffset,
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer { translationY = pageOffset }
             .systemBarsPadding()
             .verticalSwipeListener(
                 sensitivity = Constants.SWIPE_DOWN_THRESHOLD_OPEN_MORE_MENU,
@@ -229,7 +268,8 @@ fun BoxWithConstraintsScope.HomeUi(
             onSkipAllTransactions = {
                 skipAllModalVisible = true
             },
-            driveExport = uiState.driveExport,
+            driveExport = driveExport,
+            pullState = pullState,
             onSyncDrive = {
                 onEvent(HomeEvent.SyncDrive)
             },
@@ -237,6 +277,7 @@ fun BoxWithConstraintsScope.HomeUi(
     }
 
     MoreMenu(
+        modifier = Modifier.graphicsLayer { translationY = pageOffset },
         expanded = moreMenuExpanded,
         theme = uiState.theme,
         balance = uiState.balance.toDouble(),
@@ -338,25 +379,12 @@ fun HomeLazyColumn(
     onSkipTransaction: (Transaction) -> Unit,
     onSkipAllTransactions: (List<Transaction>) -> Unit,
     modifier: Modifier = Modifier,
+    pullState: PullToRefreshState,
     driveExport: DriveExportState = HomeState.NoDriveExport,
     onSyncDrive: () -> Unit = {},
 ) {
     val ivyContext = ivyWalletCtx()
 
-    val currentDriveExport by rememberUpdatedState(driveExport)
-    val pullState = rememberPullToRefreshState(
-        enabled = { currentDriveExport.connected && !currentDriveExport.running }
-    )
-    if (pullState.isRefreshing) {
-        LaunchedEffect(Unit) {
-            onSyncDrive()
-            withTimeoutOrNull(SYNC_START_TIMEOUT_MS) {
-                snapshotFlow { currentDriveExport.running }.first { it }
-            }
-            snapshotFlow { currentDriveExport.running }.first { !it }
-            pullState.endRefresh()
-        }
-    }
     var listTop by remember { mutableIntStateOf(0) }
     var dividerTop by remember { mutableIntStateOf(0) }
 
@@ -417,15 +445,12 @@ fun HomeLazyColumn(
             )
         }
 
-        val revealStatus = driveExport.showStatus || driveExport.running ||
-            pullState.progress > 0f || pullState.isRefreshing
-        if (driveExport.connected && revealStatus) {
+        if (driveExport.connected && driveExport.showStatus) {
             item {
                 Spacer(Modifier.height(16.dp))
 
                 DriveStrip(
                     state = driveExport,
-                    pullProgress = pullState.progress,
                     onSync = onSyncDrive,
                 )
             }
@@ -462,24 +487,30 @@ fun HomeLazyColumn(
         )
     }
 
-    Box(
-        modifier = Modifier
-            .offset { IntOffset(0, (dividerTop - listTop).coerceAtLeast(0)) }
-            .fillMaxWidth()
-            .height(PULL_INDICATOR_AREA)
-            .clipToBounds(),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        PullToRefreshContainer(
-            state = pullState,
-            contentColor = UI.colors.primary,
-        )
+    if (driveExport.connected && driveExport.showStatus) {
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(0, (dividerTop - listTop).coerceAtLeast(0)) }
+                .fillMaxWidth()
+                .height(PULL_INDICATOR_AREA)
+                .clipToBounds(),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            DrivePullIndicator(
+                modifier = Modifier.graphicsLayer {
+                    translationY = pullState.verticalOffset - size.height
+                },
+                progress = pullState.progress,
+                refreshing = pullState.isRefreshing,
+            )
+        }
     }
     }
 }
 
 private const val SYNC_START_TIMEOUT_MS = 3_000L
-private val PULL_INDICATOR_AREA = 120.dp
+private val PULL_INDICATOR_AREA = 140.dp
+private val PULL_THRESHOLD = 80.dp
 
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi

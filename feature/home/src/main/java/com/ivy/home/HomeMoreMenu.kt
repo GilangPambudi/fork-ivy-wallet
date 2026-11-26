@@ -199,7 +199,7 @@ fun BoxWithConstraintsScope.MoreMenu(
     }
 
     CircleButtonFilled(
-        modifier = Modifier
+        modifier = modifier
             .layout { measurable, constraints ->
                 val placeable = measurable.measure(constraints)
 
