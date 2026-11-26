@@ -251,7 +251,7 @@ class RootActivity : AppCompatActivity(), RootScreen {
             createIntent = { _, fileName ->
                 Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "application/csv"
+                    type = if (fileName.endsWith(".csv")) "text/csv" else "application/csv"
                     putExtra(Intent.EXTRA_TITLE, fileName)
 
                     // Optionally, specify a URI for the directory that should be opened in
