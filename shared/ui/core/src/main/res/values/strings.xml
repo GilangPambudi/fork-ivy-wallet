@@ -290,6 +290,8 @@
     <string name="drive_strip_failed">Could not save. Tap to retry</string>
     <string name="drive_strip_pull">Pull to save to Drive</string>
     <string name="drive_strip_release">Release to save to Drive</string>
+    <string name="drive_show_status">Show Drive status on Home</string>
+    <string name="drive_show_status_description">When off, the status only appears while you pull the list down or while saving</string>
     <string name="left_to_spend">Left to spend</string>
     <string name="budget_exceeded_by">Budget exceeded by</string>
     <string name="buffer_exceeded_by">Buffer exceeded by</string>

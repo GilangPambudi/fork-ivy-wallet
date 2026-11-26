@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
@@ -95,6 +96,7 @@ class SettingsViewModel @Inject constructor(
             hideIncome = getHideIncome(),
             languageOptionVisible = isLanguageOptionVisible(),
             driveExport = driveExportStatus.value,
+            driveShowStatus = driveExport.state.collectAsState().value.showStatus,
         )
     }
 
@@ -292,6 +294,7 @@ class SettingsViewModel @Inject constructor(
                 runDriveExportNow()
             }
             SettingsEvent.DisconnectDriveExport -> disconnectDriveExport()
+            is SettingsEvent.SetDriveShowStatus -> driveExport.setShowStatus(event.show)
         }
     }
 

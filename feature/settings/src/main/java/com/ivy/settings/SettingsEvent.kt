@@ -22,4 +22,5 @@ sealed interface SettingsEvent {
     data object ConnectDriveExport : SettingsEvent
     data object RunDriveExport : SettingsEvent
     data object DisconnectDriveExport : SettingsEvent
+    data class SetDriveShowStatus(val show: Boolean) : SettingsEvent
 }

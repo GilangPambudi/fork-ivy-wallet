@@ -287,6 +287,8 @@
     <string name="drive_strip_failed">Gagal menyimpan. Ketuk untuk coba lagi</string>
     <string name="drive_strip_pull">Tarik untuk simpan ke Drive</string>
     <string name="drive_strip_release">Lepas untuk simpan ke Drive</string>
+    <string name="drive_show_status">Tampilkan status Drive di Home</string>
+    <string name="drive_show_status_description">Kalau mati, status cuma muncul saat daftar ditarik ke bawah atau saat menyimpan</string>
     <string name="left_to_spend">Sisa yang dapat dihabiskan</string>
     <string name="budget_exceeded_by">Anggaran melebihi oleh</string>
     <string name="buffer_exceeded_by">Buffer melebihi oleh</string>

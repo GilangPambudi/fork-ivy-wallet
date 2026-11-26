@@ -41,6 +41,7 @@ data class DriveExportState(
     val running: Boolean,
     val lastSuccess: Instant?,
     val lastError: String?,
+    val showStatus: Boolean = true,
 )
 
 @Singleton
@@ -77,7 +78,13 @@ class DriveExport @Inject constructor(
         running = running,
         lastSuccess = lastSuccess(),
         lastError = lastError(),
+        showStatus = sharedPrefs.getBoolean(KEY_SHOW_STATUS, true),
     )
+
+    fun setShowStatus(show: Boolean) {
+        sharedPrefs.putBoolean(KEY_SHOW_STATUS, show)
+        _state.value = _state.value.copy(showStatus = show)
+    }
 
     fun start() {
         db.invalidationTracker.addObserver(
@@ -191,6 +198,7 @@ class DriveExport @Inject constructor(
         private const val KEY_URI_RECENT = "drive_export_recent_uri"
         private const val KEY_LAST_SUCCESS = "drive_export_last_success"
         private const val KEY_LAST_ERROR = "drive_export_last_error"
+        private const val KEY_SHOW_STATUS = "drive_export_show_status"
         private const val WORK_NAME = "drive_export"
         private const val DAILY_WORK_NAME = "drive_export_daily"
         private const val TABLE_TRANSACTIONS = "transactions"

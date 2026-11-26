@@ -96,6 +96,10 @@ fun BoxWithConstraintsScope.SettingsScreen() {
         startDateOfMonth = uiState.startDateOfMonth.toInt(),
         languageOptionVisible = uiState.languageOptionVisible,
         driveExport = uiState.driveExport,
+        driveShowStatus = uiState.driveShowStatus,
+        onSetDriveShowStatus = {
+            viewModel.onEvent(SettingsEvent.SetDriveShowStatus(it))
+        },
         onConnectDriveExport = {
             viewModel.onEvent(SettingsEvent.ConnectDriveExport)
         },
@@ -165,6 +169,8 @@ private fun BoxWithConstraintsScope.UI(
     progressState: Boolean = false,
     treatTransfersAsIncomeExpense: Boolean = false,
     driveExport: DriveExportStatus = DriveExportStatus.NotConnected,
+    driveShowStatus: Boolean = true,
+    onSetDriveShowStatus: (Boolean) -> Unit = {},
     onConnectDriveExport: () -> Unit = {},
     onRunDriveExport: () -> Unit = {},
     onDisconnectDriveExport: () -> Unit = {},
@@ -262,6 +268,8 @@ private fun BoxWithConstraintsScope.UI(
 
             DriveExport(
                 status = driveExport,
+                showStatus = driveShowStatus,
+                onSetShowStatus = onSetDriveShowStatus,
                 onConnect = onConnectDriveExport,
                 onRun = onRunDriveExport,
                 onDisconnect = onDisconnectDriveExport,
@@ -878,6 +886,8 @@ private fun AccountCardLocalAccount(
 @Composable
 private fun DriveExport(
     status: DriveExportStatus,
+    showStatus: Boolean,
+    onSetShowStatus: (Boolean) -> Unit,
     onConnect: () -> Unit,
     onRun: () -> Unit,
     onDisconnect: () -> Unit,
@@ -898,6 +908,16 @@ private fun DriveExport(
     }
 
     if (status != DriveExportStatus.NotConnected) {
+        Spacer(Modifier.height(12.dp))
+
+        AppSwitch(
+            lockApp = showStatus,
+            onSetLockApp = onSetShowStatus,
+            text = stringResource(R.string.drive_show_status),
+            description = stringResource(R.string.drive_show_status_description),
+            icon = R.drawable.ic_vue_weather_cloud,
+        )
+
         Spacer(Modifier.height(12.dp))
 
         SettingsDefaultButton(

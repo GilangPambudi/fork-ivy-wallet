@@ -2,8 +2,11 @@ package com.ivy.home
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -11,15 +14,27 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.unit.IntOffset
+import com.ivy.design.l0_system.UI
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.math.roundToInt
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -335,9 +350,15 @@ fun HomeLazyColumn(
     if (pullState.isRefreshing) {
         LaunchedEffect(Unit) {
             onSyncDrive()
+            withTimeoutOrNull(SYNC_START_TIMEOUT_MS) {
+                snapshotFlow { currentDriveExport.running }.first { it }
+            }
+            snapshotFlow { currentDriveExport.running }.first { !it }
             pullState.endRefresh()
         }
     }
+    var listTop by remember { mutableIntStateOf(0) }
+    var dividerTop by remember { mutableIntStateOf(0) }
 
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -355,8 +376,13 @@ fun HomeLazyColumn(
     val timeProvider = LocalTimeProvider.current
     val timeConverter = LocalTimeConverter.current
     val timeFormatter = LocalTimeFormatter.current
-    LazyColumn(
+    Box(
         modifier = modifier
+            .fillMaxSize()
+            .onGloballyPositioned { listTop = it.positionInRoot().y.roundToInt() }
+    ) {
+    LazyColumn(
+        modifier = Modifier
             .fillMaxSize()
             .nestedScroll(pullState.nestedScrollConnection)
             .nestedScroll(nestedScrollConnection)
@@ -384,10 +410,16 @@ fun HomeLazyColumn(
         item {
             Spacer(Modifier.height(16.dp))
 
-            TransactionsDividerLine()
+            TransactionsDividerLine(
+                modifier = Modifier.onGloballyPositioned {
+                    dividerTop = it.positionInRoot().y.roundToInt()
+                }
+            )
         }
 
-        if (driveExport.connected) {
+        val revealStatus = driveExport.showStatus || driveExport.running ||
+            pullState.progress > 0f || pullState.isRefreshing
+        if (driveExport.connected && revealStatus) {
             item {
                 Spacer(Modifier.height(16.dp))
 
@@ -429,7 +461,25 @@ fun HomeLazyColumn(
             onSkipAllTransactions = onSkipAllTransactions
         )
     }
+
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(0, (dividerTop - listTop).coerceAtLeast(0)) }
+            .fillMaxWidth()
+            .height(PULL_INDICATOR_AREA)
+            .clipToBounds(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        PullToRefreshContainer(
+            state = pullState,
+            contentColor = UI.colors.primary,
+        )
+    }
+    }
 }
+
+private const val SYNC_START_TIMEOUT_MS = 3_000L
+private val PULL_INDICATOR_AREA = 120.dp
 
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
