@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -353,11 +354,11 @@ private fun PillTab(
     wideIndicator: Boolean,
     onClick: () -> Unit,
 ) {
-    val (icon, label) = when (tab) {
-        MainTab.HOME -> R.drawable.ic_home to R.string.home
-        MainTab.ACCOUNTS -> R.drawable.ic_accounts to R.string.accounts
-        MainTab.REPORTS -> R.drawable.ic_statistics_s to R.string.reports
-        MainTab.SETTINGS -> R.drawable.ic_settings to R.string.settings
+    val (icon, label, iconSize) = when (tab) {
+        MainTab.HOME -> Triple(R.drawable.ic_home, R.string.home, 44.dp)
+        MainTab.ACCOUNTS -> Triple(R.drawable.ic_accounts, R.string.accounts, 44.dp)
+        MainTab.REPORTS -> Triple(R.drawable.ic_statistics_s, R.string.reports, 38.dp)
+        MainTab.SETTINGS -> Triple(R.drawable.ic_settings, R.string.settings, 31.dp)
     }
     val indicator = UI.colors.primary.copy(alpha = 0.18f)
     val tint = if (selected) UI.colors.primary else UI.colors.gray
@@ -366,28 +367,38 @@ private fun PillTab(
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .thenIf(wideIndicator && selected) { background(indicator) }
-            .padding(horizontal = if (wideIndicator) 14.dp else 2.dp, vertical = 6.dp)
+            .padding(
+                horizontal = if (wideIndicator) 16.dp else 2.dp,
+                vertical = if (wideIndicator) 8.dp else 6.dp,
+            )
             .testTag("pill_tab_${tab.name.lowercase()}"),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(if (wideIndicator) 2.dp else 4.dp),
     ) {
         Box(
             modifier = Modifier
-                .size(width = 60.dp, height = 34.dp)
-                .clip(CircleShape)
-                .thenIf(!wideIndicator && selected) { background(indicator) },
+                .size(
+                    width = if (wideIndicator) 24.dp else 64.dp,
+                    height = if (wideIndicator) 24.dp else 32.dp,
+                )
+                .thenIf(!wideIndicator && selected) { clip(CircleShape).background(indicator) },
             contentAlignment = Alignment.Center,
         ) {
             IvyIcon(
-                modifier = Modifier.size(30.dp),
+                modifier = Modifier.requiredSize(iconSize),
                 icon = icon,
                 tint = tint,
             )
         }
         Text(
             text = stringResource(label),
-            style = UI.typo.c.copy(fontSize = 13.sp).style(
+            style = UI.typo.c.copy(fontSize = 12.sp).style(
                 fontWeight = FontWeight.Bold,
-                color = if (selected) UI.colors.pureInverse else UI.colors.gray,
+                color = when {
+                    selected && wideIndicator -> UI.colors.primary
+                    selected -> UI.colors.pureInverse
+                    else -> UI.colors.gray
+                },
             ),
             maxLines = 1,
         )

@@ -332,7 +332,7 @@ private fun BoxWithConstraintsScope.UI(
             SettingsDefaultButton(
                 icon = R.drawable.ic_vue_security_shield,
                 text = stringResource(R.string.backup_data),
-                iconPadding = 8.dp
+                iconPadding = 11.dp
             ) {
                 onBackupData()
             }
@@ -342,6 +342,7 @@ private fun BoxWithConstraintsScope.UI(
             SettingsPrimaryButton(
                 icon = R.drawable.ic_export_csv,
                 text = stringResource(R.string.import_data),
+                iconPadding = 3.dp,
                 backgroundGradient = GradientGreen
             ) {
                 nav.navigateTo(
@@ -369,6 +370,10 @@ private fun BoxWithConstraintsScope.UI(
                     Theme.DARK -> stringResource(R.string.dark_mode)
                     Theme.AMOLED_DARK -> stringResource(R.string.amoled_mode)
                     Theme.AUTO -> stringResource(R.string.auto_mode)
+                },
+                iconPadding = when (theme) {
+                    Theme.LIGHT, Theme.AUTO -> 11.dp
+                    Theme.DARK, Theme.AMOLED_DARK -> 10.dp
                 }
             ) {
                 onSwitchTheme()
@@ -399,7 +404,7 @@ private fun BoxWithConstraintsScope.UI(
             if (languageOptionVisible) {
                 SettingsDefaultButton(
                     icon = R.drawable.ic_vue_location_global,
-                    iconPadding = 6.dp,
+                    iconPadding = 11.dp,
                     text = stringResource(R.string.language),
                     description = Locale.getDefault().displayName
                 ) {
@@ -411,6 +416,7 @@ private fun BoxWithConstraintsScope.UI(
 
             SettingsDefaultButton(
                 icon = R.drawable.ic_currency,
+                iconPadding = 3.dp,
                 text = stringResource(R.string.exchange_rates),
             ) {
                 nav.navigateTo(ExchangeRatesScreen)
@@ -431,7 +437,8 @@ private fun BoxWithConstraintsScope.UI(
                 lockApp = showNotifications,
                 onSetLockApp = onSetShowNotifications,
                 text = stringResource(R.string.show_notifications),
-                icon = R.drawable.ic_notification_m
+                icon = R.drawable.ic_notification_m,
+                iconPadding = 4.dp
             )
 
             Spacer(Modifier.height(12.dp))
@@ -441,7 +448,8 @@ private fun BoxWithConstraintsScope.UI(
                 onSetLockApp = onSetHideCurrentBalance,
                 text = stringResource(R.string.hide_balance),
                 description = stringResource(R.string.hide_balance_description),
-                icon = R.drawable.ic_hide_m
+                icon = R.drawable.ic_hide_m,
+                iconPadding = 2.dp
             )
 
             Spacer(Modifier.height(12.dp))
@@ -451,7 +459,8 @@ private fun BoxWithConstraintsScope.UI(
                 onSetLockApp = onSetHideIncome,
                 text = stringResource(R.string.hide_income),
                 description = stringResource(R.string.hide_income_description),
-                icon = R.drawable.ic_hide_m
+                icon = R.drawable.ic_hide_m,
+                iconPadding = 2.dp
             )
 
             Spacer(Modifier.height(12.dp))
@@ -501,7 +510,7 @@ private fun BoxWithConstraintsScope.UI(
             val rootScreen = rootScreen()
             SettingsPrimaryButton(
                 icon = R.drawable.github_logo,
-                iconPadding = 10.dp,
+                iconPadding = 12.dp,
                 text = stringResource(R.string.ivy_wallet_is_opensource),
                 backgroundGradient = Gradient.solid(MediumBlack)
             ) {
@@ -639,7 +648,7 @@ private fun DriveBackup(
     SettingsDefaultButton(
         icon = R.drawable.ic_vue_security_shield,
         text = stringResource(R.string.drive_backup),
-        iconPadding = 8.dp,
+        iconPadding = 11.dp,
         description = description,
     ) {
         onEvent(
@@ -653,7 +662,6 @@ private fun DriveBackup(
         SettingsDefaultButton(
             icon = R.drawable.ic_delete,
             text = stringResource(R.string.drive_backup_disconnect),
-            iconPadding = 6.dp,
         ) {
             onEvent(SettingsEvent.DisconnectDriveBackup)
         }
@@ -669,7 +677,7 @@ private fun RivyAppearance(
     SettingsDefaultButton(
         icon = R.drawable.ic_vue_design_color_swatch,
         text = stringResource(R.string.rivy_palette),
-        iconPadding = 6.dp,
+        iconPadding = 11.dp,
         description = stringResource(state.palette.label()),
     ) {
         onOpen(AppearanceModal.PALETTE)
@@ -680,7 +688,6 @@ private fun RivyAppearance(
     SettingsDefaultButton(
         icon = R.drawable.ic_home,
         text = stringResource(R.string.rivy_nav_style),
-        iconPadding = 6.dp,
         description = stringResource(state.navStyle.label()),
     ) {
         onOpen(AppearanceModal.NAV_STYLE)
@@ -692,7 +699,6 @@ private fun RivyAppearance(
         SettingsDefaultButton(
             icon = R.drawable.ic_accounts,
             text = stringResource(R.string.rivy_tab_order),
-            iconPadding = 6.dp,
             description = state.tabOrder.map { stringResource(it.label()) }.joinToString(" · "),
         ) {
             onOpen(AppearanceModal.TAB_ORDER)
@@ -707,6 +713,7 @@ private fun RivyAppearance(
         text = stringResource(R.string.rivy_nav_auto_hide),
         description = stringResource(R.string.rivy_nav_auto_hide_description),
         icon = R.drawable.ic_hide_m,
+        iconPadding = 2.dp,
     )
 }
 
@@ -996,7 +1003,7 @@ private fun CustomFeatures(
             icon = R.drawable.ic_custom_programming_m,
             tint = UI.colors.pureInverse,
             iconScale = IconScale.M,
-            padding = 0.dp
+            padding = 2.dp
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -1016,6 +1023,7 @@ private fun CustomFeatures(
 private fun AppThemeButton(
     @DrawableRes icon: Int,
     label: String,
+    iconPadding: Dp,
     onClick: () -> Unit
 ) {
     SettingsPrimaryButton(
@@ -1023,7 +1031,7 @@ private fun AppThemeButton(
         text = label,
         backgroundGradient = Gradient.solid(UI.colors.medium),
         textColor = UI.colors.pureInverse,
-        iconPadding = 6.dp,
+        iconPadding = iconPadding,
         description = stringResource(R.string.tap_to_switch_theme),
         onClick = onClick
     )
@@ -1036,6 +1044,7 @@ private fun AppSwitch(
     text: String,
     icon: Int,
     description: String = "",
+    iconPadding: Dp = 0.dp,
 ) {
     SettingsButtonRow(
         onClick = {
@@ -1048,7 +1057,7 @@ private fun AppSwitch(
             icon = icon,
             tint = UI.colors.pureInverse,
             iconScale = IconScale.M,
-            padding = 0.dp
+            padding = iconPadding
         )
 
         Spacer(Modifier.width(8.dp))
@@ -1183,7 +1192,7 @@ private fun DriveExport(
     SettingsDefaultButton(
         icon = R.drawable.ic_export_csv,
         text = stringResource(R.string.drive_export),
-        iconPadding = 6.dp,
+        iconPadding = 3.dp,
         description = description,
     ) {
         if (status == DriveExportStatus.NotConnected) onConnect() else onRun()
@@ -1196,7 +1205,7 @@ private fun DriveExport(
             SettingsDefaultButton(
                 icon = R.drawable.ic_export_csv,
                 text = stringResource(R.string.drive_setup_add_recent),
-                iconPadding = 6.dp,
+                iconPadding = 3.dp,
             ) {
                 onAddRecent()
             }
@@ -1210,6 +1219,7 @@ private fun DriveExport(
             text = stringResource(R.string.drive_show_status),
             description = stringResource(R.string.drive_show_status_description),
             icon = R.drawable.ic_vue_weather_cloud,
+            iconPadding = 11.dp,
         )
 
         Spacer(Modifier.height(12.dp))
@@ -1217,7 +1227,6 @@ private fun DriveExport(
         SettingsDefaultButton(
             icon = R.drawable.ic_delete,
             text = stringResource(R.string.drive_export_disconnect),
-            iconPadding = 6.dp,
         ) {
             onDisconnect()
         }
@@ -1231,7 +1240,7 @@ private fun ExportCSV(
     SettingsDefaultButton(
         icon = R.drawable.ic_vue_pc_printer,
         text = stringResource(R.string.export_to_csv),
-        iconPadding = 6.dp,
+        iconPadding = 11.dp,
         description = stringResource(R.string.do_not_use_for_backup_purposes)
     ) {
         onExportToCSV()
