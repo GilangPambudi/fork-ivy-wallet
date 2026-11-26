@@ -56,12 +56,13 @@ them through the Google Drive connector. Code:
 CI (`.github/workflows/apk.yml`) builds on every push to `main`, `develop` or
 `rivy/**`, about 10 minutes. Changes to Markdown files alone do not.
 
-Local builds are run only by a separate Claude session the owner sets up, in
-`.claude/worktrees/local-build`, with JDK 17 at
-`/usr/lib/jvm/java-17-openjdk` and `./gradlew :app:assembleRelease`. Other
-sessions commit, then ask the owner to have that session build. The owner
-installs APKs on the phone. Never run builds or `adb install` from a normal
-session.
+Builds happen only on GitHub: commit, push to `develop`, then download the
+APK from the run. No local builds; on the owner's laptop they were slower than
+CI. The owner installs APKs on the phone. Never run builds or `adb install`.
+
+The version label is set from git: name = date of the last commit, code =
+number of commits. CI checks out the full history (`fetch-depth: 0`) for
+that.
 
 ```sh
 gh run list --branch develop --limit 3
