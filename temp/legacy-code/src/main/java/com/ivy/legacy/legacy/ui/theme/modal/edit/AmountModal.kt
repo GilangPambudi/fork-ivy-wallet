@@ -426,12 +426,6 @@ fun AmountKeyboard(
             }
         }
 
-        CircleNumberButton(
-            forCalculator = forCalculator,
-            value = "0",
-            onNumberPressed = onNumberPressed
-        )
-
         if (show000) {
             KeypadCircleButton(
                 text = "000",
@@ -445,6 +439,12 @@ fun AmountKeyboard(
                 onNumberPressed("000")
             }
         }
+
+        CircleNumberButton(
+            forCalculator = forCalculator,
+            value = "0",
+            onNumberPressed = onNumberPressed
+        )
 
         IvyIcon(
             modifier = circleButtonModifier(onClick = onBackspace)
