@@ -96,7 +96,7 @@
     <string name="hi_name">Hai %1$s</string>
     <string name="cashflow">Cashflow: %1$s%2$s %3$s</string>
     <string name="search_transactions">Cari transaksi</string>
-    <string name="ivy_wallet_open_source">Ivy Wallet adalah sumber terbuka</string>
+    <string name="ivy_wallet_open_source">Rivy dibangun dari Ivy Wallet yang sumber terbuka</string>
     <string name="savings_goal">Tujuan tabungan</string>
     <string name="quick_access">Akses cepat</string>
     <string name="settings">Pengaturan</string>
@@ -396,7 +396,7 @@
     <string name="make_ivy_wallet_better_description">Ingin membuat Ivy Wallet menjadi lebih baik? Tulis ulasan untuk kami. Itu satu-satunya cara bagi kami untuk mengembangkan apa yang Anda inginkan dan butuhkan. Ini juga membantu kami mendapatkan peringkat lebih tinggi di PlayStore sehingga kami dapat menghabiskan uang untuk produk daripada pemasaran.\n\nKami melakukan yang terbaik kami.\nTim Ivy</string>
     <string name="we_need_your_help">Kami butuh bantuan Anda!</string>
     <string name="we_need_your_help_description">Kami hanya seorang desainer dan seorang pengembang yang bekerja pada aplikasi setelah pekerjaan jam 9-5 kami. Saat ini, kami menginvestasikan banyak waktu dan uang untuk menghasilkan kerugian dan kelelahan. Jika Anda ingin kami terus mengembangkan Ivy Wallet, silakan bagikan kepada teman dan keluarga.\n\nP.S. Ulasan di Google PlayStore juga sangat membantu!</string>
-    <string name="ivy_wallet_is_opensource">Ivy Wallet adalah sumber terbuka!</string>
+    <string name="ivy_wallet_is_opensource">Dibangun dari Ivy Wallet yang sumber terbuka</string>
     <string name="ivy_wallet_is_opensource_description">Kode Ivy Wallet terbuka dan semua orang dapat melihatnya. Kami percaya bahwa transparansi dan etika adalah hal yang harus ada dalam setiap produk perangkat lunak. Jika Anda menyukai pekerjaan kami dan ingin membuat aplikasi menjadi lebih baik, Anda dapat berkontribusi di repositori GitHub kami yang bersifat publik.</string>
     <string name="contribute">Berkontribusi</string>
     <string name="adjust_balance">Atur saldo</string>
