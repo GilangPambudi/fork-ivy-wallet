@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -100,6 +101,7 @@ fun BoxWithConstraintsScope.BottomBar(
     val ivyContext = ivyWalletCtx()
 
     var expanded by remember { mutableStateOf(false) }
+    LaunchedEffect(tab) { expanded = false }
 
     val modalId = remember { UUID.randomUUID() }
 
@@ -206,7 +208,8 @@ fun BoxWithConstraintsScope.BottomBar(
             (PILL_MARGIN * 2 + PILL_HEIGHT + FAB_BUTTON_SIZE).toDensityPx()
     }
 
-    TransactionButtons(
+    val showFab = tab != MainTab.REPORTS && tab != MainTab.SETTINGS
+    if (showFab) TransactionButtons(
         buttonsShownPercent = buttonsShownPercent,
 
         fabStartX = fabStartX,
@@ -222,7 +225,7 @@ fun BoxWithConstraintsScope.BottomBar(
         mutableStateOf(Offset.Zero)
     }
     // + & x button
-    IvyCircleButton(
+    if (showFab) IvyCircleButton(
         modifier = Modifier
             .layout { measurable, constraints ->
                 val placeable = measurable.measure(constraints)

@@ -302,7 +302,7 @@
     <string name="rivy_nav_pill_label">Pill, highlight icon and label</string>
     <string name="rivy_nav_pill_center">Pill, + button in the middle</string>
     <string name="rivy_tab_order">Tab order</string>
-    <string name="rivy_tab_order_description">Swiping between tabs follows this order. The first tab opens when Rivy starts.</string>
+    <string name="rivy_tab_order_description">Hold a row and drag it to reorder. Swiping between tabs follows this order, and the first tab opens when Rivy starts.</string>
     <string name="rivy_nav_auto_hide">Hide navbar while scrolling</string>
     <string name="rivy_nav_auto_hide_description">The navbar and + button slide away while you scroll down</string>
     <string name="rivy_done">Done</string>

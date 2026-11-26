@@ -299,7 +299,7 @@
     <string name="rivy_nav_pill_label">Pill, penanda ikon + label</string>
     <string name="rivy_nav_pill_center">Pill, tombol + di tengah</string>
     <string name="rivy_tab_order">Urutan tab</string>
-    <string name="rivy_tab_order_description">Geser antar tab mengikuti urutan ini. Tab pertama terbuka saat Rivy dibuka.</string>
+    <string name="rivy_tab_order_description">Tahan baris lalu geser untuk mengubah urutan. Geser antar tab mengikuti urutan ini, dan tab pertama terbuka saat Rivy dibuka.</string>
     <string name="rivy_nav_auto_hide">Sembunyikan navbar saat scroll</string>
     <string name="rivy_nav_auto_hide_description">Navbar dan tombol + bersembunyi saat daftar di-scroll ke bawah</string>
     <string name="rivy_done">Selesai</string>

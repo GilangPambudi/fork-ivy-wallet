@@ -34,6 +34,13 @@ class RivyUi @Inject constructor(
     private val _state = MutableStateFlow(read())
     val state: StateFlow<RivyUiState> = _state.asStateFlow()
 
+    init {
+        if (sharedPrefs.getString(KEY_PALETTE, null) == null) {
+            val existingInstall = sharedPrefs.getBoolean(SharedPrefs.ONBOARDING_COMPLETED, false)
+            setPalette(if (existingInstall) Palette.ORIGINAL else Palette.RIVY)
+        }
+    }
+
     fun setNavStyle(style: NavStyle) = save(KEY_NAV_STYLE, style.name)
 
     fun setPalette(palette: Palette) = save(KEY_PALETTE, palette.name)

@@ -68,6 +68,15 @@ import com.ivy.wallet.ui.theme.components.IvySwitch
 import com.ivy.wallet.ui.theme.components.IvyToolbar
 import com.ivy.wallet.ui.theme.modal.ChooseStartDateOfMonthModal
 import com.ivy.wallet.ui.theme.modal.CurrencyModal
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.zIndex
 import com.ivy.legacy.data.model.MainTab
 import com.ivy.legacy.rivyui.NavStyle
 import com.ivy.legacy.rivyui.Palette
@@ -702,14 +711,10 @@ private fun BoxWithConstraintsScope.AppearanceModals(
                     style = UI.typo.c.style(color = UI.colors.gray, fontWeight = FontWeight.SemiBold),
                 )
                 Spacer(Modifier.height(8.dp))
-                state.tabOrder.forEachIndexed { index, tab ->
-                    TabOrderRow(
-                        text = stringResource(tab.label()),
-                        canMoveUp = index > 0,
-                        canMoveDown = index < state.tabOrder.lastIndex,
-                        onMove = { by -> onEvent(SettingsEvent.MoveTab(tab, by)) },
-                    )
-                }
+                TabOrderList(
+                    order = state.tabOrder,
+                    onMove = { tab, by -> onEvent(SettingsEvent.MoveTab(tab, by)) },
+                )
             }
 
             AppearanceModal.NONE -> Unit
@@ -750,44 +755,69 @@ private fun ChoiceRow(
 }
 
 @Composable
-private fun TabOrderRow(
-    text: String,
-    canMoveUp: Boolean,
-    canMoveDown: Boolean,
-    onMove: (Int) -> Unit,
+private fun TabOrderList(
+    order: List<MainTab>,
+    onMove: (MainTab, Int) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .clip(UI.shapes.r4)
-            .background(UI.colors.medium)
-            .padding(start = 16.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = text,
-            style = UI.typo.b2.style(color = UI.colors.pureInverse, fontWeight = FontWeight.Bold),
-        )
-        IvyIcon(
-            modifier = Modifier
-                .clip(UI.shapes.rFull)
-                .clickable(enabled = canMoveUp) { onMove(-1) }
-                .padding(8.dp),
-            icon = R.drawable.ic_expand_less,
-            tint = if (canMoveUp) UI.colors.pureInverse else UI.colors.gray,
-        )
-        IvyIcon(
-            modifier = Modifier
-                .clip(UI.shapes.rFull)
-                .clickable(enabled = canMoveDown) { onMove(1) }
-                .padding(8.dp),
-            icon = R.drawable.ic_expand_more,
-            tint = if (canMoveDown) UI.colors.pureInverse else UI.colors.gray,
-        )
+    val currentOrder by rememberUpdatedState(order)
+    val stepPx = with(LocalDensity.current) { TAB_ROW_STEP.toPx() }
+    var dragging by remember { mutableStateOf<MainTab?>(null) }
+    var dragOffset by remember { mutableFloatStateOf(0f) }
+
+    order.forEach { tab ->
+        key(tab) {
+            val active = tab == dragging
+            Row(
+                modifier = Modifier
+                    .zIndex(if (active) 1f else 0f)
+                    .graphicsLayer { translationY = if (active) dragOffset else 0f }
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .height(TAB_ROW_HEIGHT)
+                    .shadow(if (active) 8.dp else 0.dp, UI.shapes.r4)
+                    .clip(UI.shapes.r4)
+                    .background(if (active) UI.colors.primary.copy(alpha = 0.14f) else UI.colors.medium)
+                    .pointerInput(tab) {
+                        detectDragGesturesAfterLongPress(
+                            onDragStart = {
+                                dragging = tab
+                                dragOffset = 0f
+                            },
+                            onDragEnd = { dragging = null },
+                            onDragCancel = { dragging = null },
+                            onDrag = { change, amount ->
+                                change.consume()
+                                dragOffset += amount.y
+                                val index = currentOrder.indexOf(tab)
+                                if (dragOffset > stepPx / 2 && index < currentOrder.lastIndex) {
+                                    onMove(tab, 1)
+                                    dragOffset -= stepPx
+                                } else if (dragOffset < -stepPx / 2 && index > 0) {
+                                    onMove(tab, -1)
+                                    dragOffset += stepPx
+                                }
+                            },
+                        )
+                    }
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(tab.label()),
+                    style = UI.typo.b2.style(color = UI.colors.pureInverse, fontWeight = FontWeight.Bold),
+                )
+                IvyIcon(
+                    icon = R.drawable.ic_hamburger,
+                    tint = UI.colors.gray,
+                )
+            }
+        }
     }
 }
+
+private val TAB_ROW_HEIGHT = 52.dp
+private val TAB_ROW_STEP = 60.dp
 
 private fun NavStyle.label(): Int = when (this) {
     NavStyle.CLASSIC -> R.string.rivy_nav_classic
