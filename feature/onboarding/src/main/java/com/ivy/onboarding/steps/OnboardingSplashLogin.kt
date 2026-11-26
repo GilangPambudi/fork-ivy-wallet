@@ -62,7 +62,7 @@ import com.ivy.onboarding.OnboardingState
 import com.ivy.ui.R
 import com.ivy.wallet.ui.theme.Gradient
 import com.ivy.wallet.ui.theme.Gray
-import com.ivy.wallet.ui.theme.Green
+import com.ivy.wallet.ui.theme.Ivy
 import com.ivy.wallet.ui.theme.components.IvyIcon
 import kotlin.math.roundToInt
 
@@ -224,7 +224,7 @@ fun BoxWithConstraintsScope.OnboardingSplashLogin(
                 .padding(end = 8.dp),
             text = stringResource(R.string.opensource),
             style = UI.typo.c.style(
-                color = Green,
+                color = Ivy,
                 fontWeight = FontWeight.Bold
             )
         )
@@ -346,7 +346,7 @@ private fun PrivacyPolicyAndTC() {
 
         addStyle(
             style = SpanStyle(
-                color = Green,
+                color = Ivy,
                 textDecoration = TextDecoration.Underline
             ),
             start = tcStart,
@@ -355,7 +355,7 @@ private fun PrivacyPolicyAndTC() {
 
         addStyle(
             style = SpanStyle(
-                color = Green,
+                color = Ivy,
                 textDecoration = TextDecoration.Underline
             ),
             start = privacyStart,

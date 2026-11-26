@@ -28,7 +28,7 @@ import com.ivy.onboarding.components.OnboardingProgressSlider
 import com.ivy.ui.R
 import com.ivy.wallet.ui.theme.GradientIvy
 import com.ivy.wallet.ui.theme.Gray
-import com.ivy.wallet.ui.theme.Green
+import com.ivy.wallet.ui.theme.Ivy
 import com.ivy.wallet.ui.theme.Orange
 import com.ivy.wallet.ui.theme.White
 import com.ivy.wallet.ui.theme.components.CloseButton
@@ -109,8 +109,8 @@ fun OnboardingType(
                 .padding(16.dp),
             text = stringResource(R.string.import_backup_file),
             iconStart = R.drawable.ic_export_csv,
-            iconTint = Green,
-            textColor = Green
+            iconTint = Ivy,
+            textColor = Ivy
         ) {
             onStartImport()
         }
