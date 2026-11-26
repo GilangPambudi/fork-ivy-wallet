@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -43,6 +47,7 @@ import com.ivy.legacy.data.LegacyDueSection
 import com.ivy.legacy.data.model.MainTab
 import com.ivy.legacy.data.model.Month
 import com.ivy.legacy.data.model.TimePeriod
+import com.ivy.legacy.driveexport.DriveExportState
 import com.ivy.legacy.ivyWalletCtx
 import com.ivy.legacy.ui.component.transaction.TransactionsDividerLine
 import com.ivy.legacy.ui.component.transaction.transactions
@@ -208,7 +213,11 @@ fun BoxWithConstraintsScope.HomeUi(
             } then2 onEvent,
             onSkipAllTransactions = {
                 skipAllModalVisible = true
-            }
+            },
+            driveExport = uiState.driveExport,
+            onSyncDrive = {
+                onEvent(HomeEvent.SyncDrive)
+            },
         )
     }
 
@@ -281,6 +290,7 @@ fun BoxWithConstraintsScope.HomeUi(
 
 @Suppress("LongParameterList")
 @ExperimentalAnimationApi
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeLazyColumn(
     hideBalance: Boolean,
@@ -312,9 +322,22 @@ fun HomeLazyColumn(
     onHiddenIncomeClick: () -> Unit,
     onSkipTransaction: (Transaction) -> Unit,
     onSkipAllTransactions: (List<Transaction>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    driveExport: DriveExportState = HomeState.NoDriveExport,
+    onSyncDrive: () -> Unit = {},
 ) {
     val ivyContext = ivyWalletCtx()
+
+    val currentDriveExport by rememberUpdatedState(driveExport)
+    val pullState = rememberPullToRefreshState(
+        enabled = { currentDriveExport.connected && !currentDriveExport.running }
+    )
+    if (pullState.isRefreshing) {
+        LaunchedEffect(Unit) {
+            onSyncDrive()
+            pullState.endRefresh()
+        }
+    }
 
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -335,6 +358,7 @@ fun HomeLazyColumn(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .nestedScroll(pullState.nestedScrollConnection)
             .nestedScroll(nestedScrollConnection)
             .testTag("home_lazy_column"),
         state = listState
@@ -361,6 +385,18 @@ fun HomeLazyColumn(
             Spacer(Modifier.height(16.dp))
 
             TransactionsDividerLine()
+        }
+
+        if (driveExport.connected) {
+            item {
+                Spacer(Modifier.height(16.dp))
+
+                DriveStrip(
+                    state = driveExport,
+                    pullProgress = pullState.progress,
+                    onSync = onSyncDrive,
+                )
+            }
         }
 
         item {

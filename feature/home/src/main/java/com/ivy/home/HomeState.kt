@@ -8,6 +8,7 @@ import com.ivy.legacy.data.AppBaseData
 import com.ivy.legacy.data.BufferInfo
 import com.ivy.legacy.data.LegacyDueSection
 import com.ivy.legacy.data.model.TimePeriod
+import com.ivy.legacy.driveexport.DriveExportState
 import com.ivy.wallet.domain.pure.data.IncomeExpensePair
 import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
@@ -34,5 +35,15 @@ data class HomeState(
     val hideBalance: Boolean,
     val hideIncome: Boolean,
     val expanded: Boolean,
-    val shouldShowAccountSpecificColorInTransactions: Boolean
-)
+    val shouldShowAccountSpecificColorInTransactions: Boolean,
+    val driveExport: DriveExportState = NoDriveExport,
+) {
+    companion object {
+        val NoDriveExport = DriveExportState(
+            connected = false,
+            running = false,
+            lastSuccess = null,
+            lastError = null,
+        )
+    }
+}

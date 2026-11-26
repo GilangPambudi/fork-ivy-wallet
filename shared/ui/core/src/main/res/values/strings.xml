@@ -285,6 +285,11 @@
     <string name="drive_export_success">Last updated: %1$s. Tap to update now.</string>
     <string name="drive_export_failed">Failed: %1$s. Tap to try again.</string>
     <string name="drive_export_disconnect">Stop auto export</string>
+    <string name="drive_strip_saved">Saved to Drive</string>
+    <string name="drive_strip_syncing">Saving to Drive…</string>
+    <string name="drive_strip_failed">Could not save. Tap to retry</string>
+    <string name="drive_strip_pull">Pull to save to Drive</string>
+    <string name="drive_strip_release">Release to save to Drive</string>
     <string name="left_to_spend">Left to spend</string>
     <string name="budget_exceeded_by">Budget exceeded by</string>
     <string name="buffer_exceeded_by">Buffer exceeded by</string>

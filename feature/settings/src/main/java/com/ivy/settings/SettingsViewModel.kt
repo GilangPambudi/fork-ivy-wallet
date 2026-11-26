@@ -127,14 +127,21 @@ class SettingsViewModel @Inject constructor(
 
     private fun connectDriveExport() {
         ivyContext.createNewFile("rivy.csv") { fileUri ->
-            viewModelScope.launch(Dispatchers.IO) {
-                runCatching { driveExport.connect(fileUri) }
-                    .onFailure {
-                        driveExport.disconnect()
-                        driveExportStatus.value =
-                            DriveExportStatus.Failed(it.message ?: it.javaClass.simpleName)
+            val connected = runCatching { driveExport.connect(fileUri) }
+                .onFailure {
+                    driveExport.disconnect()
+                    driveExportStatus.value =
+                        DriveExportStatus.Failed(it.message ?: it.javaClass.simpleName)
+                }
+                .isSuccess
+            if (connected) {
+                viewModelScope.launch(Dispatchers.IO) { runDriveExportNow() }
+                ivyContext.createNewFile("rivy-terbaru.csv") { recentUri ->
+                    viewModelScope.launch(Dispatchers.IO) {
+                        runCatching { driveExport.connectRecent(recentUri) }
+                        runDriveExportNow()
                     }
-                    .onSuccess { runDriveExportNow() }
+                }
             }
         }
     }

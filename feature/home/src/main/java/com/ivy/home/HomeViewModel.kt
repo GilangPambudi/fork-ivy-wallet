@@ -3,6 +3,7 @@ package com.ivy.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ import com.ivy.legacy.datamodel.Account
 import com.ivy.legacy.datamodel.Settings
 import com.ivy.legacy.datamodel.temp.toLegacyDomain
 import com.ivy.legacy.domain.action.settings.UpdateSettingsAct
+import com.ivy.legacy.driveexport.DriveExport
 import com.ivy.legacy.domain.action.viewmodel.home.ShouldHideIncomeAct
 import com.ivy.legacy.utils.dateNowUTC
 import com.ivy.legacy.utils.ioThread
@@ -92,7 +94,8 @@ class HomeViewModel @Inject constructor(
     private val transactionMapper: TransactionMapper,
     private val timeProvider: TimeProvider,
     private val timeConverter: TimeConverter,
-    private val features: Features
+    private val features: Features,
+    private val driveExport: DriveExport,
 ) : ComposeViewModel<HomeState, HomeEvent>() {
     private var currentTheme by mutableStateOf(Theme.AUTO)
     private var name by mutableStateOf("")
@@ -154,7 +157,8 @@ class HomeViewModel @Inject constructor(
             hideBalance = getHideBalance(),
             expanded = getExpanded(),
             hideIncome = getHideIncome(),
-            shouldShowAccountSpecificColorInTransactions = getShouldShowAccountSpecificColorInTransactions()
+            shouldShowAccountSpecificColorInTransactions = getShouldShowAccountSpecificColorInTransactions(),
+            driveExport = driveExport.state.collectAsState().value,
         )
     }
 
@@ -252,6 +256,7 @@ class HomeViewModel @Inject constructor(
                 HomeEvent.SwitchTheme -> switchTheme()
                 is HomeEvent.DismissCustomerJourneyCard -> dismissCustomerJourneyCard(event.card)
                 is HomeEvent.SetExpanded -> setExpanded(event.expanded)
+                HomeEvent.SyncDrive -> ioThread { driveExport.export() }
             }
         }
     }

@@ -282,6 +282,11 @@
     <string name="drive_export_success">Terakhir diperbarui: %1$s. Ketuk untuk perbarui sekarang.</string>
     <string name="drive_export_failed">Gagal: %1$s. Ketuk untuk coba lagi.</string>
     <string name="drive_export_disconnect">Hentikan ekspor otomatis</string>
+    <string name="drive_strip_saved">Tersimpan di Drive</string>
+    <string name="drive_strip_syncing">Menyimpan ke Drive…</string>
+    <string name="drive_strip_failed">Gagal menyimpan. Ketuk untuk coba lagi</string>
+    <string name="drive_strip_pull">Tarik untuk simpan ke Drive</string>
+    <string name="drive_strip_release">Lepas untuk simpan ke Drive</string>
     <string name="left_to_spend">Sisa yang dapat dihabiskan</string>
     <string name="budget_exceeded_by">Anggaran melebihi oleh</string>
     <string name="buffer_exceeded_by">Buffer melebihi oleh</string>
