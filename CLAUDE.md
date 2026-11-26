@@ -60,6 +60,10 @@ Builds happen only on GitHub: commit, push to `develop`, then download the
 APK from the run. No local builds; on the owner's laptop they were slower than
 CI. The owner installs APKs on the phone. Never run builds or `adb install`.
 
+A push whose head commit message contains `[release]` also publishes the APK
+as a GitHub Release (tag `v<date>-<count>`). Other pushes only build. A
+manual run with the `release` input does the same.
+
 The version label is set from git: name = date of the last commit, code =
 number of commits. CI checks out the full history (`fetch-depth: 0`) for
 that.
