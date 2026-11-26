@@ -9,8 +9,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  assemble_demo_apk:
+  assemble_apk:
     runs-on: ubuntu-latest
+    env:
+      # Set once the repository has its own signing key in the secrets.
+      HAS_SIGNING_KEY: ${{ secrets.SIGNING_KEYSTORE != '' }}
     steps:
       - name: Checkout GIT
         uses: actions/checkout@v4
@@ -24,11 +27,36 @@ jobs:
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Demo APK
-        run: ./gradlew assembleDemo
+      # Full build, signed with the owner's own key.
+      - name: Create keystore for release signing
+        if: env.HAS_SIGNING_KEY == 'true'
+        run: echo "$SIGNING_KEYSTORE" | base64 -d > sign.jks
+        env:
+          SIGNING_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE }}
 
-      - name: Upload APK to Github Actions
+      - name: Build Release APK
+        if: env.HAS_SIGNING_KEY == 'true'
+        run: ./gradlew assembleRelease
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+
+      - name: Upload Release APK
+        if: env.HAS_SIGNING_KEY == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Rivy-Demo.apk
+          name: Rivy.apk
+          path: app/build/outputs/apk/release/app-release.apk
+
+      # Without a signing key: the same app, signed with the public test key.
+      - name: Build Demo APK
+        if: env.HAS_SIGNING_KEY != 'true'
+        run: ./gradlew assembleDemo
+
+      - name: Upload Demo APK
+        if: env.HAS_SIGNING_KEY != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rivy-test-key.apk
           path: app/build/outputs/apk/demo/app-demo.apk
