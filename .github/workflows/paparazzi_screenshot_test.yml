@@ -5,6 +5,12 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      record:
+        description: 'Record new snapshots instead of verifying'
+        type: boolean
+        default: false
 
 jobs:
   sceenshot_test:
@@ -23,4 +29,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run Paparazzi screenshot tests
+        if: ${{ !inputs.record }}
         run: ./gradlew verifyPaparazziDebug
+
+      - name: Record Paparazzi snapshots
+        if: ${{ inputs.record }}
+        run: ./gradlew recordPaparazziDebug
+
+      - name: Upload recorded snapshots
+        if: ${{ inputs.record }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: paparazzi-snapshots
+          path: '**/src/test/snapshots/images/*.png'
