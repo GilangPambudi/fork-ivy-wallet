@@ -235,8 +235,8 @@ fun BoxWithConstraintsScope.BottomBar(
     if (fabEnabled) TransactionButtons(
         buttonsShownPercent = buttonsShownPercent,
 
-        fabStartX = fabStartX,
-        fabStartY = fabStartY,
+        fabStartX = fabX,
+        fabStartY = fabY,
 
         onAddIncome = onAddIncome,
         onAddExpense = onAddExpense,
