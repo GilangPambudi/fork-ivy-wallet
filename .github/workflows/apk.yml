@@ -40,7 +40,7 @@ jobs:
 
       - name: Build Release APK
         if: env.HAS_SIGNING_KEY == 'true'
-        run: ./gradlew assembleRelease
+        run: ./gradlew :app:assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
