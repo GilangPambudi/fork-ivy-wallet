@@ -26,7 +26,7 @@ What Rivy adds or changes:
 ## Getting the app
 
 Rivy is not on the Play Store. Download `Rivy.apk` from the
-[Releases page](https://github.com/GilangPambudi/fork-ivy-wallet/releases)
+[Releases page](https://github.com/GilangPambudi/rivy/releases)
 and open it on your phone. Android may ask you to allow installing apps from
 your browser or file manager.
 

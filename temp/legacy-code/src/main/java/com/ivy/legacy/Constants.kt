@@ -8,7 +8,7 @@ object Constants {
 
     const val URL_IVY_WALLET_REPO = "https://github.com/Ivy-Apps/ivy-wallet"
 
-    const val URL_RIVY_REPO = "https://github.com/GilangPambudi/fork-ivy-wallet"
+    const val URL_RIVY_REPO = "https://github.com/GilangPambudi/rivy"
 
     const val URL_GITHUB_NEW_ISSUE = "https://github.com/Ivy-Apps/ivy-wallet/issues/new/choose"
 
