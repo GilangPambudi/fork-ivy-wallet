@@ -80,7 +80,7 @@ fun OnboardingSetName(
             modifier = Modifier
                 .padding(start = 32.dp)
                 .size(
-                    width = 56.dp,
+                    width = 48.dp,
                     height = 48.dp
                 ),
             painter = painterResource(id = R.drawable.ivy_wallet_logo),
