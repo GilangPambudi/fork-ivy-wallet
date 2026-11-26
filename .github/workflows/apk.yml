@@ -12,10 +12,17 @@ on:
     paths-ignore:
       - '**.md'
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'Publish this build as a GitHub Release'
+        type: boolean
+        default: false
 
 jobs:
   assemble_apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       # Set once the repository has its own signing key in the secrets.
       HAS_SIGNING_KEY: ${{ secrets.SIGNING_KEYSTORE != '' }}
@@ -55,6 +62,19 @@ jobs:
         with:
           name: Rivy.apk
           path: app/build/outputs/apk/release/app-release.apk
+
+      - name: Publish GitHub Release
+        if: env.HAS_SIGNING_KEY == 'true' && inputs.release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          name=$(git log -1 --format=%cd --date=format:%Y.%m.%d)
+          code=$(git rev-list --count HEAD)
+          cp app/build/outputs/apk/release/app-release.apk Rivy.apk
+          gh release create "v$name-$code" Rivy.apk \
+            --target "$GITHUB_SHA" \
+            --title "Rivy $name ($code)" \
+            --generate-notes
 
       # Without a signing key: the same app, signed with the public test key.
       - name: Build Demo APK
